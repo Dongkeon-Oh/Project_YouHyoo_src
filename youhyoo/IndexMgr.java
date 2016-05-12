@@ -76,21 +76,21 @@ public class IndexMgr {
   			con=getConnection();
   			
   			for(int i=0; i<pensionNumber.length; i++){
-	  			sql= "select r_minpri_we,r_minpri_wd from room where r_pension=?";
+	  			sql= "select r_min_we,r_min_wd from room where r_pension=?";
 	  			pstmt = con.prepareStatement(sql);
 	            pstmt.setInt(1, pensionNumber[i]);
-	            rs = pstmt.executeQuery();//###
+	            rs = pstmt.executeQuery();
 	            if(rs.next()){
 	            	Room_Dto room=new Room_Dto();
 	            	
-	            	room.setR_minpri_we(rs.getInt("r_minpri_we"));
-	            	room.setR_minpri_wd(rs.getInt("r_minpri_wd"));
+	            	room.setR_min_we(rs.getInt("r_min_we"));
+	            	room.setR_min_wd(rs.getInt("r_min_wd"));
 	
 	              	roomList.add(room);
 	            }//while end 
   			}
   	    }catch(Exception ex){
-  	    	System.out.println("getProduct() 예외 :"+ex);
+  	    	System.out.println("getIndexRoomList() 예외 :"+ex);
   	    }finally{
   	    	try{
   	    		if(rs!=null){rs.close();}
