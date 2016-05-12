@@ -2,7 +2,7 @@ package youhyoo;
 
 import java.util.*;
 
-public class Mgr {
+public class Q_pention_Dto {
 	private Boolean qp_state;
 	private String qp_title;
 	private String qp_question;
@@ -61,7 +61,7 @@ public class Mgr {
 		this.qp_pension = qp_pension;
 	}
 	
-	public Mgr(){
+	public Q_pention_Dto(){
 		
 	}
 }
