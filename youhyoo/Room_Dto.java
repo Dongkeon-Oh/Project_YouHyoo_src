@@ -4,15 +4,18 @@ package youhyoo;
 public class Room_Dto {
 	private int r_rum;
 	private String r_name;
-	private int r_maxpri_wd; 
-	private int r_minpri_we;
-	private int r_maxpri_we;
-	private int r_minpri_wd; 
+	private int r_max_wd; 
+	private int r_max_we;
+	private int r_min_wd; 
+	private int r_min_we;
 	private int r_maxcapa; 
 	private int r_mincapa; 
 	private int r_size; 
 	private String r_photo; 
 	private int r_pension;
+	
+	public Room_Dto(){}
+	
 	public int getR_rum() {
 		return r_rum;
 	}
@@ -25,29 +28,29 @@ public class Room_Dto {
 	public void setR_name(String r_name) {
 		this.r_name = r_name;
 	}
-	public int getR_maxpri_wd() {
-		return r_maxpri_wd;
+	public int getR_max_wd() {
+		return r_max_wd;
 	}
-	public void setR_maxpri_wd(int r_maxpri_wd) {
-		this.r_maxpri_wd = r_maxpri_wd;
+	public void setR_max_wd(int r_max_wd) {
+		this.r_max_wd = r_max_wd;
 	}
-	public int getR_minpri_we() {
-		return r_minpri_we;
+	public int getR_max_we() {
+		return r_max_we;
 	}
-	public void setR_minpri_we(int r_minpri_we) {
-		this.r_minpri_we = r_minpri_we;
+	public void setR_max_we(int r_max_we) {
+		this.r_max_we = r_max_we;
 	}
-	public int getR_maxpri_we() {
-		return r_maxpri_we;
+	public int getR_min_wd() {
+		return r_min_wd;
 	}
-	public void setR_maxpri_we(int r_maxpri_we) {
-		this.r_maxpri_we = r_maxpri_we;
+	public void setR_min_wd(int r_min_wd) {
+		this.r_min_wd = r_min_wd;
 	}
-	public int getR_minpri_wd() {
-		return r_minpri_wd;
+	public int getR_min_we() {
+		return r_min_we;
 	}
-	public void setR_minpri_wd(int r_minpri_wd) {
-		this.r_minpri_wd = r_minpri_wd;
+	public void setR_min_we(int r_min_we) {
+		this.r_min_we = r_min_we;
 	}
 	public int getR_maxcapa() {
 		return r_maxcapa;
@@ -78,5 +81,6 @@ public class Room_Dto {
 	}
 	public void setR_pension(int r_pension) {
 		this.r_pension = r_pension;
-	} 
+	}
+	
 }//class

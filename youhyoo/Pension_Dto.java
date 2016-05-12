@@ -6,9 +6,6 @@ public class Pension_Dto {
 	private String p_addr1;
 	private String p_addr2;
 	private String p_addr3;
-	private String p_addr4;
-	private String p_addr5;
-	private String zipcode;
 	private String tel;
 	private int paytype;
 	private String account;
@@ -49,24 +46,6 @@ public class Pension_Dto {
 	}
 	public void setP_addr3(String p_addr3) {
 		this.p_addr3 = p_addr3;
-	}
-	public String getP_addr4() {
-		return p_addr4;
-	}
-	public void setP_addr4(String p_addr4) {
-		this.p_addr4 = p_addr4;
-	}
-	public String getP_addr5() {
-		return p_addr5;
-	}
-	public void setP_addr5(String p_addr5) {
-		this.p_addr5 = p_addr5;
-	}
-	public String getZipcode() {
-		return zipcode;
-	}
-	public void setZipcode(String zipcode) {
-		this.zipcode = zipcode;
 	}
 	public String getTel() {
 		return tel;
