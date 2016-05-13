@@ -123,7 +123,7 @@ public class IndexMgr {
 		//처리내용 
 			con=getConnection();//커넥션 얻기
 			stmt=con.createStatement();//생성시 인자 안들어 감
-			rs=stmt.executeQuery(sql);
+			rs=stmt.executeQuery(sql);// 실행싱 인자 들어감 
 					
 		}catch(Exception ex){
 			System.out.println("setWishlist() 예외 :"+ex);
