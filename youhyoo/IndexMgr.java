@@ -116,21 +116,19 @@ public class IndexMgr {
 	public void setWishlist(String userId, int roomNumber){
 		String sql="insert into wishlist values('"+userId+"',"+roomNumber+")";
 		Connection con=null;
-		Statement stmt=null;
-  	    ResultSet rs=null;
+		PreparedStatement pstmt=null;
 			
 		try{
 		//처리내용 
 			con=getConnection();//커넥션 얻기
-			stmt=con.createStatement();//생성시 인자 안들어 감
-			rs=stmt.executeQuery(sql);// 실행싱 인자 들어감 
+			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			pstmt.executeUpdate();//쿼리수행 ###
 					
 		}catch(Exception ex){
 			System.out.println("setWishlist() 예외 :"+ex);
 		}finally{
 			try{
-				if(rs!=null){rs.close();}
-				if(stmt!=null){stmt.close();}
+				if(pstmt!=null){pstmt.close();}
 				if(con!=null){con.close();}
 			}catch(Exception ex){}
 		}//finally end
