@@ -22,7 +22,7 @@ public class IndexMgr {
 	//--------------------	
 	// 1. 펜션 목록 리스트
 	//--------------------
-	public List<Pension_Dto> getIndexPensionList() throws Exception{
+	public List<Pension_Dto> getIndexPensionList(String location) throws Exception{
 		String sql="";//변수
 		Connection con=null;
 		Statement stmt=null;
@@ -32,8 +32,17 @@ public class IndexMgr {
 		try{
 		//처리내용 
 			con=getConnection();//커넥션 얻기
-			sql="select * from Pension order by p_num desc";
-			
+			if(location.equals("index")){
+				sql="select * from Pension order by p_num desc";
+			}else{
+				String locationchecker=location.substring(0, 3);
+				location=location.substring(3, location.length());
+				if(locationchecker.equals("hot")){
+					sql="select * from Pension where p_addr2 like '"+location+"%' order by p_num desc";
+				}else{
+					sql="select * from Pension where p_addr1 like '"+location+"%' order by p_num desc";
+				}
+			}
 			stmt=con.createStatement();//생성시 인자 안들어 감
 			rs=stmt.executeQuery(sql);// 실행싱 인자 들어감 
 			
