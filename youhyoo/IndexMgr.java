@@ -22,7 +22,7 @@ public class IndexMgr {
 	//--------------------	
 	// 1. 펜션 목록 리스트
 	//--------------------
-	public List<Pension_Dto> getIndexPensionList() throws Exception{
+	public List<Pension_Dto> getIndexPensionList(String location) throws Exception{
 		String sql="";//변수
 		Connection con=null;
 		Statement stmt=null;
@@ -32,8 +32,17 @@ public class IndexMgr {
 		try{
 		//처리내용 
 			con=getConnection();//커넥션 얻기
-			sql="select * from Pension order by p_num desc";
-			
+			if(location.equals("index")){
+				sql="select * from Pension order by p_num desc";
+			}else{
+				String locationchecker=location.substring(0, 3);
+				location=location.substring(3, location.length());
+				if(locationchecker.equals("hot")){
+					sql="select * from Pension where p_addr2 like '"+location+"%' order by p_num desc";
+				}else{
+					sql="select * from Pension where p_addr1 like '"+location+"%' order by p_num desc";
+				}
+			}
 			stmt=con.createStatement();//생성시 인자 안들어 감
 			rs=stmt.executeQuery(sql);// 실행싱 인자 들어감 
 			
@@ -44,7 +53,7 @@ public class IndexMgr {
 				pension.setP_name(rs.getString("p_name"));
 				pension.setP_addr1(rs.getString("p_addr1"));
 				pension.setP_addr2(rs.getString("p_addr2"));
-				pension.setPhoto(rs.getString("p_photo"));
+				pension.setP_photo(rs.getString("p_photo"));
 				
 				pensionList.add(pension);//모델빈을 list에 넣는다 *******
 			}//while end 
@@ -56,7 +65,7 @@ public class IndexMgr {
 				if(rs!=null){rs.close();}
 				if(stmt!=null){stmt.close();}
 				if(con!=null){con.close();}
-			}catch(Exception exx){}
+			}catch(Exception ex){}
 		}//finally end
 		return pensionList;
 	}//getIndexPensionList() end
@@ -96,8 +105,34 @@ public class IndexMgr {
   	    		if(rs!=null){rs.close();}
   	    		if(pstmt!=null){pstmt.close();}
   	    		if(con!=null){con.close();}
-  	    	}catch(Exception exx){}
+  	    	}catch(Exception ex){}
   	    }//finally end
   	    return roomList;
 	}//getIndexRoomList() end
+	
+	//--------------------	
+	// 3. 위시리스트 작성
+	//--------------------
+	public void setWishlist(String userId, int roomNumber){
+		String sql="insert into wishlist values('"+userId+"',"+roomNumber+")";
+		Connection con=null;
+		Statement stmt=null;
+  	    ResultSet rs=null;
+			
+		try{
+		//처리내용 
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();//생성시 인자 안들어 감
+			rs=stmt.executeQuery(sql);
+					
+		}catch(Exception ex){
+			System.out.println("setWishlist() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+	}//end setWishlist()
 }
