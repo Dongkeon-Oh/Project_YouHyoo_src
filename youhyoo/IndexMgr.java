@@ -53,7 +53,7 @@ public class IndexMgr {
 				pension.setP_name(rs.getString("p_name"));
 				pension.setP_addr1(rs.getString("p_addr1"));
 				pension.setP_addr2(rs.getString("p_addr2"));
-				pension.setPhoto(rs.getString("p_photo"));
+				pension.setP_photo(rs.getString("p_photo"));
 				
 				pensionList.add(pension);//¸ðµ¨ºóÀ» list¿¡ ³Ö´Â´Ù *******
 			}//while end 
