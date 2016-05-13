@@ -81,7 +81,7 @@ public class User_Dao {
 	}//confirmId()
 	
 	//우편번호 검색, 주소 자동입력 
-	public Vector<Zipcode_Dto> zipcode(String z_addr3){
+	public Vector<Zipcode_Dto> zipcodeRead(String z_addr3){
 		Connection con=null;
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
@@ -104,7 +104,7 @@ public class User_Dao {
 				vec.add(dto); //벡터에 넣기 
 			}//while			
 		}catch(Exception ex){
-				System.out.println("zipcode() 오류:"+ex);
+				System.out.println("zipcodeRead() 오류:"+ex);
 		}finally{
 			try{
 				if(rs!=null){rs.close();}
