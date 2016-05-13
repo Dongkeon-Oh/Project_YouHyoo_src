@@ -2,7 +2,7 @@ package youhyoo;
 
 
 public class Room_Dto {
-	private int r_rum;
+	private int r_num;
 	private String r_name;
 	private int r_max_wd; 
 	private int r_max_we;
@@ -16,11 +16,11 @@ public class Room_Dto {
 	
 	public Room_Dto(){}
 	
-	public int getR_rum() {
-		return r_rum;
+	public int getR_num() {
+		return r_num;
 	}
-	public void setR_rum(int r_rum) {
-		this.r_rum = r_rum;
+	public void setR_num(int r_num) {
+		this.r_num = r_num;
 	}
 	public String getR_name() {
 		return r_name;
