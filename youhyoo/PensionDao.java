@@ -1,3 +1,4 @@
+package youhyoo;
 
 import java.sql.*;
 
@@ -23,7 +24,7 @@ public class PensionDao {
 		return ds.getConnection();
 	}//getConnection end
 	
-	public void insertQuestion(Q_pention_Dto dto) throws Exception{
+	public void insertQuestion(Q_pension_Dto dto) throws Exception{
 		
 		Connection con=null;
 		PreparedStatement pstmt=null;
@@ -82,12 +83,12 @@ public class PensionDao {
 		return x;
 	}//getArticleCount end
 	
-	public List<Q_pention_Dto> getList(int start,int cnt) throws Exception{
+	public List<Q_pension_Dto> getList(int start,int cnt) throws Exception{
 		//mysql에서 int start(시작 위치),int end(갯수)
 		Connection con=null;
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-		List <Q_pention_Dto>list=null;// Vector 대신 List,ArrayList 사용
+		List <Q_pension_Dto>list=null;// Vector 대신 List,ArrayList 사용
 		
 		try{
 			//처리문
@@ -96,9 +97,9 @@ public class PensionDao {
 			rs=pstmt.executeQuery();//쿼리 수행
 			
 			if(rs.next()){
-				list=new ArrayList<Q_pention_Dto>();
+				list=new ArrayList<Q_pension_Dto>();
 				do{
-					Q_pention_Dto dto=new Q_pention_Dto();
+					Q_pension_Dto dto=new Q_pension_Dto();
 					dto.setQp_num(rs.getInt("qp_num"));
 					dto.setQp_state(rs.getBoolean("qp_state"));
 					dto.setQp_title(rs.getString("qp_title"));
@@ -122,4 +123,61 @@ public class PensionDao {
 		}//finally end
 		return list;//***
 	}//getList end
+	
+	public Q_pension_Dto getArticle(int qp_num) throws Exception{
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		Q_pension_Dto dto=null;
+		
+		try{
+			con=getConnection();
+			pstmt=con.prepareStatement("update Q_pension set qp_view=qp_view+1 where qp_num=?");
+			pstmt.setInt(1, qp_num);
+			pstmt.executeUpdate();
+			
+		}catch(Exception ex){
+			System.out.println("getArticle() 예외 : "+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}
+		return dto;
+	}
+	
+	public void updateAnswer(Q_pension_Dto dto) throws Exception{
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		String sql="";
+		
+		try{
+			con=getConnection();
+			pstmt=con.prepareStatement("select qp_answer from Q_pension where qp_num=?");
+			pstmt.setString(1, dto.getQp_answer());
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()){
+				dto=new Q_pension_Dto();
+				sql="update q_pension set qp_answer=? where=qp_num=?";
+				pstmt=con.prepareStatement(sql);
+				
+				pstmt.setString(1, dto.getQp_answer());
+				pstmt.executeUpdate();
+			}//if
+		}catch(Exception ex){
+			System.out.println("updateAnswer 예외 : "+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){
+				
+			}
+		}
+	}
 }

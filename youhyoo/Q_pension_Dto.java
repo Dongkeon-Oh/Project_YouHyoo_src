@@ -2,7 +2,7 @@ package youhyoo;
 
 import java.util.*;
 
-public class Q_pention_Dto {
+public class Q_pension_Dto {
 	private Boolean qp_state;
 	private String qp_title;
 	private String qp_question;
@@ -11,7 +11,14 @@ public class Q_pention_Dto {
 	private int qp_view;
 	private String qp_answer;
 	private int qp_pension;
+	private int qp_num;
 	
+	public int getQp_num() {
+		return qp_num;
+	}
+	public void setQp_num(int qp_num) {
+		this.qp_num = qp_num;
+	}
 	public Boolean getQp_state() {
 		return qp_state;
 	}
@@ -61,7 +68,7 @@ public class Q_pention_Dto {
 		this.qp_pension = qp_pension;
 	}
 	
-	public Q_pention_Dto(){
+	public Q_pension_Dto(){
 		
 	}
 }
