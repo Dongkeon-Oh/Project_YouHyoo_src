@@ -133,4 +133,51 @@ public class IndexMgr {
 			}catch(Exception ex){}
 		}//finally end
 	}//end setWishlist()
+	
+	//--------------------	
+	// 4. 지도 검색 리스트 - 위치
+	//--------------------
+	public List<Pension_Dto> getMapPensionList() throws Exception{
+		String sql="";//변수
+		Connection con=null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		List <Pension_Dto> pensionList=new ArrayList<Pension_Dto>();
+			
+		try{
+		//처리내용 
+			con=getConnection();//커넥션 얻기
+			sql="select p_num, p_name, p_lat, p_lng, p_photo, p_addr1, p_addr2, p_tel from Pension ";
+			stmt=con.createStatement();//생성시 인자 안들어 감
+			rs=stmt.executeQuery(sql);// 실행싱 인자 들어감 
+			
+			while(rs.next()){
+				Pension_Dto pension=new Pension_Dto();
+				
+				pension.setP_num(rs.getInt("p_num"));
+				pension.setP_name(rs.getString("p_name"));
+				pension.setP_lat(rs.getDouble("p_lat"));
+				pension.setP_lng(rs.getDouble("p_lng"));
+				
+				StringTokenizer pensionPhoto = new StringTokenizer(rs.getString("p_photo"),"|");
+				
+				pension.setP_photo(pensionPhoto.nextToken());
+				pension.setP_addr1(rs.getString("p_addr1"));
+				pension.setP_addr2(rs.getString("p_addr2"));
+				pension.setP_tel(rs.getString("p_tel"));
+				
+				pensionList.add(pension);//모델빈을 list에 넣는다 *******
+			}//while end 
+		
+		}catch(Exception ex){
+			System.out.println("getMapPensionList() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+		return pensionList;
+	}//getMapPensionList() end
 }
