@@ -33,7 +33,7 @@ public class DetailMgr {
 		try{
 			con=getConnection();//커넥션 얻기
 			stmt=con.createStatement();//생성시 인자 안들어 감
-			sql="select * from pension where p_num='"+p_num+"'";
+			sql="select * from pension where p_num="+p_num;
 			rs=stmt.executeQuery(sql);//실행시 인자 들어감
 
 			while(rs.next()){
@@ -68,18 +68,18 @@ public class DetailMgr {
 	}//getDetails() end
 
 	//객실 정보 얻기------------------------------------------------------
-	public Vector<Room_Dto> getRoom(int p_num) throws Exception{
+	public List<Room_Dto> getRoom(int p_num){// throws Exception{
 		Connection con=null;
 		Statement stmt=null;
 		ResultSet rs=null;
 		String sql="";
 		
-		Vector<Room_Dto> vec=new Vector<Room_Dto>();
+		List<Room_Dto> roomList=new ArrayList<Room_Dto>();
 
 		try{
 			con=getConnection();//커넥션 얻기
 			stmt=con.createStatement();//생성시 인자 안들어 감
-			sql="select * from room where p_num='"+p_num+"'";
+			sql="select * from room where r_pension="+p_num;
 			rs=stmt.executeQuery(sql);//실행시 인자 들어감
 
 			while(rs.next()){
@@ -97,11 +97,11 @@ public class DetailMgr {
 				room.setR_photo(rs.getString("r_photo"));
 				room.setR_pension(rs.getInt("r_pension"));
 				
-				vec.add(room);
+				roomList.add(room);
 			}
 		}//try			
 		catch(Exception ex){
-			System.out.println("getPension() 예외 :"+ex);
+			System.out.println("getRoom() 예외 :"+ex);
 		}
 		finally{
 			try{
@@ -111,7 +111,7 @@ public class DetailMgr {
 			}
 			catch(Exception exx){}
 		}
-		return vec;
+		return roomList;
 	}//getRoom() end
 	
 	//객실 주중최저가 얻기
@@ -179,4 +179,40 @@ public class DetailMgr {
 			}		
 			return max;
 		}//getMin_wd
+		
+		//객실 주말최저가 얻기
+	public List<OrderRoom_Dto> getOrder(int o_pension){
+		Connection con=null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		String sql="";
+		List<OrderRoom_Dto> orderList=new ArrayList<OrderRoom_Dto>();
+		
+		try{
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();//생성시 인자 안들어 감
+			sql="select o_pension, o_room, o_date from order_room where o_pension="+o_pension;
+			rs=stmt.executeQuery(sql);//실행시 인자 들어감
+			
+			while(rs.next()){
+				OrderRoom_Dto o_list=new OrderRoom_Dto();
+				o_list.setO_pension(rs.getString("o_pension"));
+				o_list.setO_room(rs.getString("o_room"));
+				o_list.setO_date(rs.getDate("o_date"));
+				orderList.add(o_list);
+			}
+		}
+		catch(Exception ex){
+			System.out.println("getOrder() 예외 :"+ex);
+		}
+		finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}
+			catch(Exception exx){}
+		}		
+		return orderList;
+	}//getMin_wd
 }//class end		
