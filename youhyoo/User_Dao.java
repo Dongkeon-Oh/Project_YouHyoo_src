@@ -160,7 +160,7 @@ public class User_Dao {
 			User_Dto dto=null;
 			try{
 				con=getConnection(); //目池记 掘绰促 
-				String sql="select * from user where u_id="+u_id;
+				String sql="select * from user where u_id="+"'"+u_id+"'";
 				pstmt=con.prepareStatement(sql);
 				rs=pstmt.executeQuery(); //孽府 荐青 
 				

@@ -24,6 +24,7 @@ public class PensionDao {
 		return ds.getConnection();
 	}//getConnection end
 	
+	//글 내용 입력
 	public void insertQuestion(Q_pension_Dto dto) throws Exception{
 		
 		Connection con=null;
@@ -56,6 +57,7 @@ public class PensionDao {
 		}//finally end
 	}//insertQuestion end
 	
+	//전체 글 갯수 얻기
 	public int getArticleCount() throws Exception{
 		
 		Connection con=null;
@@ -83,6 +85,7 @@ public class PensionDao {
 		return x;
 	}//getArticleCount end
 	
+	//글 리스트 얻기
 	public List<Q_pension_Dto> getList(int start,int cnt) throws Exception{
 		//mysql에서 int start(시작 위치),int end(갯수)
 		Connection con=null;
@@ -124,6 +127,7 @@ public class PensionDao {
 		return list;//***
 	}//getList end
 	
+	//조회수 증가
 	public Q_pension_Dto getArticle(int qp_num) throws Exception{
 		Connection con=null;
 		PreparedStatement pstmt=null;
@@ -148,6 +152,7 @@ public class PensionDao {
 		return dto;
 	}
 	
+	//답변 등록
 	public void updateAnswer(Q_pension_Dto dto) throws Exception{
 		Connection con=null;
 		PreparedStatement pstmt=null;
