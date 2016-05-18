@@ -1,8 +1,10 @@
 package youhyoo;
 
 import java.sql.*;
+
 import javax.sql.*;
 import javax.naming.*;
+
 import java.util.*;
 
 public class IndexMgr {
@@ -180,4 +182,66 @@ public class IndexMgr {
 		}//finally end
 		return pensionList;
 	}//getMapPensionList() end
+	
+	//--------------------	
+	// 5. 위시리스트 얻기
+	//--------------------
+	public List<Pension_Dto> getWishlist(String u_id){
+		String sql="select p_num,p_name,p_photo from pension where p_num=any"
+				+ "(select w_pnum from Wishlist where w_id="+"'"+u_id+"')";
+		Connection con=null;
+		ResultSet rs=null;
+		PreparedStatement pstmt=null;
+		List<Pension_Dto> w_list=new ArrayList<Pension_Dto>();	
+			
+		try{
+		//처리내용
+			con=getConnection();//커넥션 얻기
+			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+			Pension_Dto wish=new Pension_Dto();
+			wish.setP_num(rs.getInt("p_num"));
+			wish.setP_name(rs.getString("p_name"));
+			wish.setP_photo(rs.getString("p_photo"));
+			
+			w_list.add(wish);
+			}
+					
+		}catch(Exception ex){
+			System.out.println("getWishlist() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+		
+		return w_list;
+	}//getWishlist() end
+	
+	//--------------------	
+	// 6. 위시리스트 삭제
+	//--------------------
+	public void delWishlist(String w_id, int w_pnum){
+		Connection con=null;
+		Statement stmt=null;
+		String sql="delete from Wishlist where w_id="+"'"+w_id+"'"+" and w_pnum="+"'"+w_pnum+"'";
+		try{
+			con=getConnection();
+			stmt=con.createStatement();
+			stmt.executeUpdate(sql);
+			
+		}catch(Exception ex){
+			System.out.println("delWishlist() 예외 :"+ex);
+		}finally{
+			try{
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+	}//delWishlist() end
+
 }
