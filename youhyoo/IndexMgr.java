@@ -243,5 +243,43 @@ public class IndexMgr {
 			}catch(Exception ex){}
 		}//finally end
 	}//delWishlist() end
+	
+	//--------------------	
+	// 7. 예약정보 얻기
+	//--------------------
+	public List<OrderRoom_Dto> getOrder(String u_id){
+		String sql="select p_num,p_name,p_photo from pension where p_num=any"
+				+ "(select w_pnum from Wishlist where w_id="+"'"+u_id+"')";
+		Connection con=null;
+		ResultSet rs=null;
+		PreparedStatement pstmt=null;
+		List<OrderRoom_Dto> o_list=new ArrayList<OrderRoom_Dto>();	
+			
+		try{
+		//처리내용
+			con=getConnection();//커넥션 얻기
+			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+			OrderRoom_Dto order=new OrderRoom_Dto();
+			order.setO_num(rs.getInt("o_num"));
+			
+			
+			o_list.add(order);
+			}
+					
+		}catch(Exception ex){
+			System.out.println("getOrder() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+		
+		return o_list;
+	}//getOrder() end
 
 }
