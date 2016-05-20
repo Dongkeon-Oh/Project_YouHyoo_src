@@ -191,13 +191,14 @@ public class DetailMgr {
 		try{
 			con=getConnection();//커넥션 얻기
 			stmt=con.createStatement();//생성시 인자 안들어 감
-			sql="select o_pension, o_room, o_date from order_room where o_pension="+o_pension;
+			sql="select o_rnum, o_date from order_room where o_pnum="+o_pension;
 			rs=stmt.executeQuery(sql);//실행시 인자 들어감
 			
 			while(rs.next()){
 				OrderRoom_Dto o_list=new OrderRoom_Dto();
 				o_list.setO_pname(rs.getString("o_pname"));
 				o_list.setO_rname(rs.getString("o_rname"));
+				o_list.setO_rnum(rs.getInt("o_rnum"));
 				o_list.setO_date(rs.getDate("o_date"));
 				orderList.add(o_list);
 			}

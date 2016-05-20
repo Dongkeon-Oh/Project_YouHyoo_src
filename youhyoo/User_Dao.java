@@ -243,10 +243,8 @@ public class User_Dao {
 					pstmt2.executeUpdate();//쿼리 실행
 					x=1;//회원 탈퇴
 				}else{
-					x=-1;//비밀 번호 틀림
+					x=0;//비밀 번호 틀림
 				}//else
-			}else{
-				x=0;//존재하지 않을때
 			}
 		}catch(Exception ex){
 			System.out.println("deleteUser() 예외 :"+ex);

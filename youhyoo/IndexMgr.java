@@ -245,10 +245,11 @@ public class IndexMgr {
 	}//delWishlist() end
 	
 	//--------------------	
-	// 7. 예약정보 얻기
+	// 7. 예약정보 리스트 얻기
 	//--------------------
-	public List<OrderRoom_Dto> getOrder(String u_id){
-		String sql="select * from order_room where o_id="+"'"+u_id+"'";
+	public List<OrderRoom_Dto> getOrder(String u_id ,String sDate, String eDate){
+		String sql="select * from order_room where o_id="+"'"+u_id+"'"
+				+ " and o_date between '"+sDate+"'"+" and '"+eDate+"'"+" order by o_date";
 		Connection con=null;
 		ResultSet rs=null;
 		PreparedStatement pstmt=null;
@@ -293,7 +294,53 @@ public class IndexMgr {
 	}//getOrder() end
 	
 	//--------------------	
-	// 8. 질문리스트 얻기
+	// 8. 예약 상세정보 얻기
+	//--------------------
+	public OrderRoom_Dto getOrderDetail(int o_num){
+		String sql="select * from order_room where o_num="+o_num;
+				
+		Connection con=null;
+		ResultSet rs=null;
+		PreparedStatement pstmt=null;	
+		OrderRoom_Dto order=new OrderRoom_Dto();
+		try{
+			//처리내용
+			con=getConnection();//커넥션 얻기
+			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			rs = pstmt.executeQuery();
+
+			while(rs.next()){
+				
+				order.setO_num(rs.getInt("o_num"));
+				order.setO_customer(rs.getString("o_customer"));
+				order.setO_birth(rs.getInt("o_birth"));
+				order.setO_emercall(rs.getString("o_emercall"));
+				order.setO_request(rs.getString("o_request"));
+				order.setO_id(rs.getString("o_id"));
+				order.setO_cell(rs.getString("o_cell"));
+				order.setO_pname(rs.getString("o_pname"));
+				order.setO_rname(rs.getString("o_rname"));
+				order.setO_date(rs.getDate("o_date"));
+				order.setO_price(rs.getInt("o_price"));
+				order.setO_paytype(rs.getInt("o_paytype"));
+				order.setO_state(rs.getBoolean("o_state"));
+			}
+
+		}catch(Exception ex){
+			System.out.println("getOrderDetail() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+
+		return order;
+	}//getOrderDetail() end
+	
+	//--------------------	
+	// 9. 질문리스트 얻기
 	//--------------------
 	public List<Q_pension_Dto> getQList(String u_id){
 		String sql="select * from Q_pension where qp_id="+"'"+u_id+"'";
