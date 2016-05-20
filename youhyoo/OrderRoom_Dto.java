@@ -10,8 +10,10 @@ public class OrderRoom_Dto {
 	private String o_request;
 	private String o_id;
 	private String o_cell;
-	private String o_pension;
-	private String o_room;
+	private int o_pnum;
+	private String o_pname;
+	private int o_rnum;
+	private String o_rname;
 	private Date o_date;
 	private int o_price;
 	private int o_paytype;
@@ -75,20 +77,36 @@ public class OrderRoom_Dto {
 		this.o_cell = o_cell;
 	}
 
-	public String getO_pension() {
-		return o_pension;
+	public int getO_pnum() {
+		return o_pnum;
 	}
 
-	public void setO_pension(String o_pension) {
-		this.o_pension = o_pension;
+	public void setO_pnum(int o_pnum) {
+		this.o_pnum = o_pnum;
 	}
 
-	public String getO_room() {
-		return o_room;
+	public String getO_pname() {
+		return o_pname;
 	}
 
-	public void setO_room(String o_room) {
-		this.o_room = o_room;
+	public void setO_pname(String o_pname) {
+		this.o_pname = o_pname;
+	}
+
+	public int getO_rnum() {
+		return o_rnum;
+	}
+
+	public void setO_rnum(int o_rnum) {
+		this.o_rnum = o_rnum;
+	}
+
+	public String getO_rname() {
+		return o_rname;
+	}
+
+	public void setO_rname(String o_rname) {
+		this.o_rname = o_rname;
 	}
 
 	public Date getO_date() {

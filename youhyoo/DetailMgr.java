@@ -196,8 +196,8 @@ public class DetailMgr {
 			
 			while(rs.next()){
 				OrderRoom_Dto o_list=new OrderRoom_Dto();
-				o_list.setO_pension(rs.getString("o_pension"));
-				o_list.setO_room(rs.getString("o_room"));
+				o_list.setO_pname(rs.getString("o_pname"));
+				o_list.setO_rname(rs.getString("o_rname"));
 				o_list.setO_date(rs.getDate("o_date"));
 				orderList.add(o_list);
 			}

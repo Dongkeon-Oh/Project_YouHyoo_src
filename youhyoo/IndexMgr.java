@@ -243,5 +243,98 @@ public class IndexMgr {
 			}catch(Exception ex){}
 		}//finally end
 	}//delWishlist() end
+	
+	//--------------------	
+	// 7. 예약정보 얻기
+	//--------------------
+	public List<OrderRoom_Dto> getOrder(String u_id){
+		String sql="select * from order_room where o_id="+"'"+u_id+"'";
+		Connection con=null;
+		ResultSet rs=null;
+		PreparedStatement pstmt=null;
+		List<OrderRoom_Dto> o_list=new ArrayList<OrderRoom_Dto>();	
+			
+		try{
+		//처리내용
+			con=getConnection();//커넥션 얻기
+			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+			OrderRoom_Dto order=new OrderRoom_Dto();
+			order.setO_num(rs.getInt("o_num"));
+			order.setO_customer(rs.getString("o_customer"));
+			order.setO_birth(rs.getInt("o_birth"));
+			order.setO_emercall(rs.getString("o_emercall"));
+			order.setO_request(rs.getString("o_request"));
+			order.setO_id(rs.getString("o_id"));
+			order.setO_cell(rs.getString("o_cell"));
+			order.setO_pname(rs.getString("o_pname"));
+			order.setO_rname(rs.getString("o_rname"));
+			order.setO_date(rs.getDate("o_date"));
+			order.setO_price(rs.getInt("o_price"));
+			order.setO_paytype(rs.getInt("o_paytype"));
+			order.setO_state(rs.getBoolean("o_state"));
+			
+			o_list.add(order);
+			}
+					
+		}catch(Exception ex){
+			System.out.println("getOrder() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+		
+		return o_list;
+	}//getOrder() end
+	
+	//--------------------	
+	// 8. 질문리스트 얻기
+	//--------------------
+	public List<Q_pension_Dto> getQList(String u_id){
+		String sql="select * from Q_pension where qp_id="+"'"+u_id+"'";
+		Connection con=null;
+		ResultSet rs=null;
+		PreparedStatement pstmt=null;
+		List<Q_pension_Dto> q_list=new ArrayList<Q_pension_Dto>();	
+
+		try{
+			//처리내용
+			con=getConnection();//커넥션 얻기
+			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			rs = pstmt.executeQuery();
+
+			while(rs.next()){
+				Q_pension_Dto dto=new Q_pension_Dto();
+				
+				dto.setQp_num(rs.getInt("qp_num"));
+				dto.setQp_state(rs.getBoolean("qp_state"));
+				dto.setQp_title(rs.getString("qp_title"));
+				dto.setQp_question(rs.getString("qp_question"));
+				dto.setQp_id(rs.getString("qp_id"));
+				dto.setQp_date(rs.getDate("qp_date"));
+				dto.setQp_view(rs.getInt("qp_view"));
+				dto.setQp_answer(rs.getString("qp_answer"));
+				dto.setQp_pension(rs.getInt("qp_pension"));
+				
+				q_list.add(dto);//list에 넣기
+			}
+
+		}catch(Exception ex){
+			System.out.println("getQList() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+
+		return q_list;
+	}//getQList() end
 
 }
