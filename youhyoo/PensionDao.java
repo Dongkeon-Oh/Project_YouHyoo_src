@@ -184,5 +184,41 @@ public class PensionDao {
 				
 			}
 		}
-	}
-}
+	}//updateAnswer()
+	
+	//펜션사진 얻어오기
+	public List get_photo(String num){
+		Connection con = null;
+		Statement stmt= null;
+		ResultSet rs= null;
+		List<String> photo_list=new ArrayList<String>();
+		
+		try{
+			con=getConnection();
+			stmt=con.createStatement();
+			
+			rs=stmt.executeQuery("select p_photo,r_photo from pension inner join room on p_num=r_pension where p_num="+num);
+			
+			if(rs.next()){
+				
+				String p_photo=rs.getString("p_photo");
+				String r_photo=rs.getString("r_photo");
+				
+				photo_list.add(rs.getString("p_photo"));
+				photo_list.add(rs.getString("r_photo"));
+				
+			}//if
+		}catch(Exception ex){
+			System.out.println("get_photo() 오류"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){
+				
+			}
+		}
+		return photo_list;
+	}//get_photo()
+}//class
