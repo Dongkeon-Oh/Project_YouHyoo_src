@@ -5,6 +5,8 @@ import java.sql.*;
 import javax.sql.*;//DataSource
 import javax.naming.*;//lookup
 
+import com.sun.corba.se.spi.orbutil.fsm.State;
+
 import java.util.*;
 
 public class PensionDao {
@@ -93,7 +95,9 @@ public class PensionDao {
 		try{
 			//처리문
 			con=getConnection();//커넥션 얻기
-			pstmt=con.prepareStatement("select * from Q_pension");
+			pstmt=con.prepareStatement("select * from Q_pension order by qp_num desc limit ?,?");
+			pstmt.setInt(1, start-1);
+			pstmt.setInt(2, cnt);
 			rs=pstmt.executeQuery();//쿼리 수행
 			
 			if(rs.next()){
@@ -124,11 +128,12 @@ public class PensionDao {
 		return list;//***
 	}//getList end
 	
-	public Q_pension_Dto getArticle(int qp_num) throws Exception{
+	public Q_pension_Dto ViewsIncrease(int qp_num) throws Exception{
 		Connection con=null;
 		PreparedStatement pstmt=null;
+		Statement stmt=null;
 		ResultSet rs=null;
-		Q_pension_Dto dto=null;
+		Q_pension_Dto dto=new Q_pension_Dto();
 		
 		try{
 			con=getConnection();
@@ -136,8 +141,16 @@ public class PensionDao {
 			pstmt.setInt(1, qp_num);
 			pstmt.executeUpdate();
 			
+			String sql = "select qp_view from q_pension where qp_num="+qp_num;
+			stmt=con.createStatement();
+			rs=stmt.executeQuery(sql);
+			
+			if(rs.next()){
+				dto.setQp_view(rs.getInt("qp_view"));
+			}
+			
 		}catch(Exception ex){
-			System.out.println("getArticle() 예외 : "+ex);
+			System.out.println("ViewsIncrease() 예외 : "+ex);
 		}finally{
 			try{
 				if(rs!=null){rs.close();}
@@ -178,6 +191,98 @@ public class PensionDao {
 			}catch(Exception exx){
 				
 			}
+		}//finally end
+	}//updateAnswer end
+	
+	public Q_pension_Dto updateGetPension (int qp_num){
+		
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		Q_pension_Dto dto=null;
+		try{
+			con=getConnection();
+			pstmt=con.prepareStatement("select qp_num,qp_question,qp_title from q_pension where qp_num=?");
+			pstmt.setInt(1, qp_num);
+			pstmt.executeQuery();
+			
+			if(rs.next()){
+				dto=new Q_pension_Dto();
+				dto.setQp_num(rs.getInt("qp_num"));
+				dto.setQp_question(rs.getString("qp_question"));
+				dto.setQp_title(rs.getString("qp_title"));
+			}
+		}catch(Exception ex){
+			System.out.println("updateGetPension() 예외 : "+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){
+				
+			}//try end
+		}//finally end
+		return dto;
+	}//updateGetPension end
+	
+	public void insertPension(Q_Youhyoo_Dto dto) throws Exception{
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		String sql="";
+		
+		try{
+			con=getConnection();
+			sql="insert into Q_youhyoo(qy_num,qy_question,qy_id,qy_date,qy_state) " +
+			"values(?,?,?,NOW(),?)";
+			pstmt.setInt(1, dto.getQy_num());
+			pstmt.setString(2, dto.getQy_question());
+			pstmt.setString(3, dto.getQy_id());
+			pstmt.setInt(4, dto.getQy_state());
+			
+		}catch(Exception ex){
+			System.out.println("insertPension() 예외 : "+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){
+				
+			}
 		}
-	}
+	}//insertPension end
+	
+public void Q_ToYouHyoo(Q_Youhyoo_Dto dto) throws Exception{
+		
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		
+		String sql="";
+		
+		try{
+			con=getConnection();
+			sql="insert into Q_youhyoo(qy_num,qy_question,qy_id,qy_date,qy_state,qy_answer)"+
+					"values(?,?,?,NOW(),?,?)";
+			pstmt=con.prepareStatement(sql);
+			
+			pstmt.setInt(1, dto.getQy_num());
+			pstmt.setString(2, dto.getQy_question());
+			pstmt.setString(3, dto.getQy_id());
+			pstmt.setInt(4, 0);
+			pstmt.setString(5, dto.getQy_answer());
+			pstmt.executeUpdate();
+			
+		}catch(Exception ex){
+			System.out.println("insertQuestion() 예외 : "+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}//finally end
+	}//insertQuestion end
 }
