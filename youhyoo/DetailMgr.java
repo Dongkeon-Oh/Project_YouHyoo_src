@@ -114,6 +114,47 @@ public class DetailMgr {
 		return roomList;
 	}//getRoom() end
 	
+	//객실 정보 얻기 minimal------------------------------------------------------
+	public List<Room_Dto> getRoomMin(int p_num){// throws Exception{
+		Connection con=null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		String sql="";
+		
+		List<Room_Dto> roomList=new ArrayList<Room_Dto>();
+
+		try{
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();//생성시 인자 안들어 감
+			sql="select * from room where r_pension="+p_num;
+			rs=stmt.executeQuery(sql);//실행시 인자 들어감
+
+			while(rs.next()){
+				Room_Dto room=new Room_Dto();
+				
+				room.setR_name(rs.getString("r_name"));
+				room.setR_num(rs.getInt("r_num"));
+				room.setR_max_wd(rs.getInt("r_max_wd"));
+				room.setR_max_we(rs.getInt("r_max_we"));
+				room.setR_min_wd(rs.getInt("r_min_wd"));
+				room.setR_min_we(rs.getInt("r_min_we"));
+				room.setR_maxcapa(rs.getInt("r_maxcapa"));
+				room.setR_mincapa(rs.getInt("r_mincapa"));
+				
+				roomList.add(room);
+			}
+		}catch(Exception ex){
+			System.out.println("getRoomMin() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}
+		return roomList;
+	}//getRoomMin() end
+	
 	//객실 주중최저가 얻기
 	public int getMin_wd(int p_num){
 		int min=0;
@@ -191,7 +232,7 @@ public class DetailMgr {
 		try{
 			con=getConnection();//커넥션 얻기
 			stmt=con.createStatement();//생성시 인자 안들어 감
-			sql="select o_rnum, o_date from order_room where o_pnum="+o_pension;
+			sql="select o_pname, o_rname, o_rnum, o_date from order_room where o_pnum="+o_pension;
 			rs=stmt.executeQuery(sql);//실행시 인자 들어감
 			
 			while(rs.next()){
