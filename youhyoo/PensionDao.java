@@ -114,6 +114,8 @@ public class PensionDao {
 					dto.setQp_answer(rs.getString("qp_answer"));
 					dto.setQp_pension(rs.getInt("qp_pension"));
 					list.add(dto);//list에 넣기
+					
+					
 				}while(rs.next());
 			}//if
 		}catch(Exception ex){
@@ -254,29 +256,82 @@ public class PensionDao {
 		}
 	}//insertPension end
 	
-public void Q_ToYouHyoo(Q_Youhyoo_Dto dto) throws Exception{
-		
+	public void Q_ToYouHyoo(Q_Youhyoo_Dto dto) throws Exception{
+			
+			Connection con=null;
+			PreparedStatement pstmt=null;
+			ResultSet rs=null;
+			
+			String sql="";
+			
+			try{
+				con=getConnection();
+				sql="insert into Q_youhyoo(qy_num,qy_question,qy_id,qy_date,qy_state,qy_answer)"+
+						"values(?,?,?,NOW(),?,?)";
+				pstmt=con.prepareStatement(sql);
+				
+				pstmt.setInt(1, dto.getQy_num());
+				pstmt.setString(2, dto.getQy_question());
+				pstmt.setString(3, dto.getQy_id());
+				pstmt.setInt(4, 0);
+				pstmt.setString(5, dto.getQy_answer());
+				pstmt.executeUpdate();
+				
+			}catch(Exception ex){
+				System.out.println("insertQuestion() 예외 : "+ex);
+			}finally{
+				try{
+					if(rs!=null){rs.close();}
+					if(pstmt!=null){pstmt.close();}
+					if(con!=null){con.close();}
+				}catch(Exception exx){}
+			}//finally end
+		}//insertQuestion end
+
+	public InsertDto PensionDetail(int p_num) throws Exception{
 		Connection con=null;
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-		
-		String sql="";
+		InsertDto dto=new InsertDto();
 		
 		try{
 			con=getConnection();
-			sql="insert into Q_youhyoo(qy_num,qy_question,qy_id,qy_date,qy_state,qy_answer)"+
-					"values(?,?,?,NOW(),?,?)";
-			pstmt=con.prepareStatement(sql);
+			pstmt=con.prepareStatement("select * from pension inner join detail_Support on p_num=rs_pnum"+
+			" inner join detail_Facility on p_num=rf_pnum where p_num=?");
 			
-			pstmt.setInt(1, dto.getQy_num());
-			pstmt.setString(2, dto.getQy_question());
-			pstmt.setString(3, dto.getQy_id());
-			pstmt.setInt(4, 0);
-			pstmt.setString(5, dto.getQy_answer());
-			pstmt.executeUpdate();
+			pstmt.setInt(1, p_num);
+			rs=pstmt.executeQuery();
 			
+			if(rs.next()){
+				
+				dto.setP_intro(rs.getString("p_intro"));
+				
+				dto.setRs_market(rs.getString("rs_market"));
+				dto.setRs_meal(rs.getString("rs_meal"));
+				dto.setRs_party(rs.getString("rs_party"));
+				dto.setRs_board(rs.getString("rs_board"));
+				dto.setRs_pickup(rs.getString("rs_pickup"));
+				dto.setRs_inet(rs.getString("rs_inet"));
+				dto.setRs_movie(rs.getString("rs_movie"));
+				dto.setRs_cafe(rs.getString("rs_cafe"));
+				dto.setRs_shuttle(rs.getString("rs_shuttle"));
+				
+				dto.setRf_pool(rs.getString("rf_pool"));
+				dto.setRf_slide(rs.getString("rf_slide"));
+				dto.setRf_soccer(rs.getString("rf_soccer"));
+				dto.setRf_jokgoo(rs.getString("rf_jokgoo"));
+				dto.setRf_bbq(rs.getString("rf_bbq"));
+				dto.setRf_campfire(rs.getString("rf_campfire"));
+				dto.setRf_karaoke(rs.getString("rf_karaoke"));
+				dto.setRf_basketball(rs.getString("rf_basketball"));
+				dto.setRf_seminar(rs.getString("rf_seminar"));
+				dto.setRf_bike(rs.getString("rf_bike"));
+				dto.setRf_4wbike(rs.getString("rf_4wbike"));
+				dto.setRf_servival(rs.getString("rf_servival"));
+				
+			}
 		}catch(Exception ex){
-			System.out.println("insertQuestion() 예외 : "+ex);
+			System.out.println("PensionDetail() 오류"+ex);
 		}finally{
 			try{
 				if(rs!=null){rs.close();}
@@ -284,5 +339,6 @@ public void Q_ToYouHyoo(Q_Youhyoo_Dto dto) throws Exception{
 				if(con!=null){con.close();}
 			}catch(Exception exx){}
 		}//finally end
-	}//insertQuestion end
+		return dto;
+	}//PensionInfo end
 }
