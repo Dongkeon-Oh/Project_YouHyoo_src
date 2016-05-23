@@ -14,7 +14,6 @@ public class You {
 	private static final String USER="root";
 	private static final String PWD="12345";
 	
-	
 	Connection con=null;
 	Statement stmt=null;
 	ResultSet rs=null;
