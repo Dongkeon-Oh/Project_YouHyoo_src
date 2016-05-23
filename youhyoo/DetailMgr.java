@@ -1,6 +1,7 @@
 package youhyoo;
 
 import java.sql.*;
+import java.sql.Date;
 
 import javax.sql.*;
 import javax.naming.*;
@@ -154,6 +155,161 @@ public class DetailMgr {
 		}
 		return roomList;
 	}//getRoomMin() end
+	
+	public List<String> getRoomForOrder(int r_num, int p_num){// throws Exception{
+		Connection con=null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		String sql="";
+		
+		List<String> names=new ArrayList<String>();
+
+		try{
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();//생성시 인자 안들어 감
+			sql="select r_name,(select p_name from pension where p_num="+p_num+") as p_name from room where r_num="+r_num;
+			rs=stmt.executeQuery(sql);//실행시 인자 들어감
+
+			if(rs.next()){
+				names.add(rs.getString("r_name"));
+				names.add(rs.getString("p_name"));
+			}
+		}catch(Exception ex){
+			System.out.println("getRoomForOrder() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}
+		return names;
+	}//getRoomForOrder() end
+
+	public void insertOrderRoom(OrderRoom_Dto dto){// throws Exception{
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		String sql="";
+		
+		try{
+			con=getConnection();
+			sql="insert into order_room values(0,?,?,?,?,?,?,?,?,?,?)";
+			pstmt=con.prepareStatement(sql);
+			
+		//	pstmt.setInt(1, 0);
+			pstmt.setInt(1, dto.getO_pnum());
+			pstmt.setString(2, dto.getO_pname());
+			pstmt.setInt(3, dto.getO_rnum());
+			pstmt.setString(4, dto.getO_rname());
+			pstmt.setInt(5, dto.getO_people());
+			pstmt.setDate(6, (Date) dto.getO_date());
+			pstmt.setInt(7, dto.getO_exprice());
+			pstmt.setInt(8, dto.getO_price());
+			pstmt.setBoolean(9, dto.getO_state());
+			pstmt.setInt(10, dto.getO_group());
+			
+			pstmt.executeUpdate();
+			
+		}catch(Exception ex){
+			System.out.println("insertOrderRoom() 예외 : "+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+	}//insertOrderRoom end
+		
+	// 최신 주문 번호 알아보기
+	public int maxOrderNum(){// throws Exception{
+		Connection con=null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		int maxNum=-1;
+		
+		try{
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();//생성시 인자 안들어 감
+			rs=stmt.executeQuery("select max(o_group) from order_room");//실행시 인자 들어감
+
+			if(rs.next()){
+				maxNum=rs.getInt("max(o_group)");
+				maxNum+=1;
+			}
+		}catch(Exception ex){
+			System.out.println("maxOrderNum() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}
+		return maxNum;
+	}//maxOrderNum() end
+	
+	
+	public String orderUserCell(String id){// throws Exception{
+		Connection con=null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		String cell="ERRER";
+				
+		try{
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();//생성시 인자 안들어 감
+			rs=stmt.executeQuery("select u_cell from user where u_id='"+id+"'");//실행시 인자 들어감
+
+			if(rs.next()){
+				cell=rs.getString("u_cell");
+			}
+		}catch(Exception ex){
+			System.out.println("orderUserCell() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}
+		return cell;
+	}//maxOrderNum() end
+	
+	public void insertOrderUser(OrderUser_Dto dto){// throws Exception{
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		String sql="";
+		
+		try{
+			con=getConnection();
+			sql="insert into order_user values(0,?,?,?,?,?,?,?,?)";
+			pstmt=con.prepareStatement(sql);
+			
+		//	pstmt.setInt(1, 0);
+			pstmt.setString(1, dto.getOu_customer());
+			pstmt.setInt(2, dto.getOu_birth());
+			pstmt.setString(3, dto.getOu_emercall());
+			pstmt.setString(4, dto.getOu_request());
+			pstmt.setString(5, dto.getOu_id());
+			pstmt.setString(6, dto.getOu_cell());
+			pstmt.setInt(7, dto.getOu_paytype());
+			pstmt.setInt(8, dto.getOu_group());
+			
+			pstmt.executeUpdate();
+			
+		}catch(Exception ex){
+			System.out.println("insertOrderUser() 예외 : "+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+	}//insertOrderUser end
 	
 	//객실 주중최저가 얻기
 	public int getMin_wd(int p_num){

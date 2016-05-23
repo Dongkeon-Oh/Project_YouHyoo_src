@@ -7,6 +7,7 @@ public class OrderRoom_Dto {
 	private int o_pnum;
 	private String o_pname;
 	private int o_rnum;
+	private int o_people;
 	private String o_rname;
 	private Date o_date;
 	private int o_exprice;
@@ -46,6 +47,14 @@ public class OrderRoom_Dto {
 
 	public void setO_rnum(int o_rnum) {
 		this.o_rnum = o_rnum;
+	}
+
+	public int getO_people() {
+		return o_people;
+	}
+
+	public void setO_people(int o_people) {
+		this.o_people = o_people;
 	}
 
 	public String getO_rname() {
