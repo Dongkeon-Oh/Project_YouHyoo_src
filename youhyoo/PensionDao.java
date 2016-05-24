@@ -341,4 +341,69 @@ public class PensionDao {
 		}//finally end
 		return dto;
 	}//PensionInfo end
+	
+	//룸사진얻어오기
+	public String get_pension_photo(String num){
+		Connection con = null;
+		Statement stmt= null;
+		ResultSet rs= null;
+		String p_photo="";
+		try{
+			con=getConnection();
+			stmt=con.createStatement();
+			
+			rs=stmt.executeQuery("select p_photo from pension where p_num="+num);
+			
+			if(rs.next()){
+				
+				p_photo=rs.getString("p_photo");
+				
+			}//if
+		}catch(Exception ex){
+			System.out.println("get_pension_photo() 오류"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){
+				
+			}
+		}
+		return p_photo;
+	}//get_pension_photo()
+	
+	// 방사진 얻어오기
+	public List get_room_photo(String num) {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<Room_Dto> r_list = new ArrayList<Room_Dto>();
+		try {
+			con = getConnection();
+			stmt = con.createStatement();
+
+			rs = stmt.executeQuery("select r_photo,r_name from room where r_pension="+ num);
+
+			while (rs.next()) {
+				Room_Dto r_dto = new Room_Dto();
+
+				r_dto.setR_photo(rs.getString("r_photo"));
+				r_dto.setR_name(rs.getString("r_name"));
+
+				r_list.add(r_dto);
+			}// while
+		} catch (Exception ex) {
+			System.out.println("get_room_photo() 오류" + ex);
+		} finally {
+			try {
+				if (rs != null) {rs.close();}
+				if (stmt != null) {	stmt.close();}
+				if (con != null) {con.close();}
+			} catch (Exception exx) {}
+		}
+		return r_list;
+	}// get_room_photo()
+	
+
 }

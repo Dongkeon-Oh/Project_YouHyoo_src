@@ -35,7 +35,6 @@ public class Review {
 			String save=req.getServletContext().getRealPath("//imgs/");
 			MultipartRequest multi=new MultipartRequest(req, save, 5*1024*1024, "utf-8",new DefaultFileRenamePolicy());
 			
-			System.out.println(save);
 			sql="insert into Review(rv_num,rv_score,rv_content,rv_id,rv_date,rv_view,rv_photo,rv_pension,rv_title) values(0,?,?,?,NOW(),0,?,?,?)";
 
 			pstmt=con.prepareStatement(sql);
@@ -65,13 +64,14 @@ public class Review {
 		}//finally
 	}//Insert_Review()
 	
-	public List List_Review(){
+	public List List_Review(int pension_num){
 		List<Review_Dto> list=new ArrayList<Review_Dto>();
 		
 		try{
 			con=getConnection();
 			stmt=con.createStatement();
-			sql="select * from review";
+			
+			sql="select * from review where rv_pension="+pension_num;
 			
 			rs=stmt.executeQuery(sql);
 			while(rs.next()){
