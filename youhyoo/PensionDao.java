@@ -26,7 +26,7 @@ public class PensionDao {
 		return ds.getConnection();
 	}//getConnection end
 	
-	public void insertQuestion(Q_pension_Dto dto) throws Exception{
+	public void insertQuestion(Q_pension_Dto dto, int qp_pension) throws Exception{
 		
 		Connection con=null;
 		PreparedStatement pstmt=null;
@@ -44,7 +44,7 @@ public class PensionDao {
 			pstmt.setString(2, dto.getQp_question());
 			pstmt.setString(3, dto.getQp_id());
 			pstmt.setInt(4, 0);
-			pstmt.setInt(5, 0);
+			pstmt.setInt(5, qp_pension);
 			pstmt.executeUpdate();
 			
 		}catch(Exception ex){
@@ -58,7 +58,7 @@ public class PensionDao {
 		}//finally end
 	}//insertQuestion end
 	
-	public int getArticleCount() throws Exception{
+	public int getArticleCount(int p_num) throws Exception{
 		
 		Connection con=null;
 		PreparedStatement pstmt=null;
@@ -67,7 +67,7 @@ public class PensionDao {
 		
 		try{
 			con=getConnection();
-			pstmt=con.prepareStatement("select count(*) from Q_pension");
+			pstmt=con.prepareStatement("select count(*) from Q_pension where qp_pension="+p_num);
 			rs=pstmt.executeQuery();//쿼리수행
 			
 			if(rs.next()){
@@ -85,39 +85,39 @@ public class PensionDao {
 		return x;
 	}//getArticleCount end
 	
-	public List<Q_pension_Dto> getList(int start,int cnt) throws Exception{
+	public List<Q_pension_Dto> getList(int start,int cnt, int p_num) throws Exception{
 		//mysql에서 int start(시작 위치),int end(갯수)
 		Connection con=null;
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-		List <Q_pension_Dto>list=null;// Vector 대신 List,ArrayList 사용
-		
+		List <Q_pension_Dto>list=new ArrayList<Q_pension_Dto>();
 		try{
 			//처리문
 			con=getConnection();//커넥션 얻기
-			pstmt=con.prepareStatement("select * from Q_pension order by qp_num desc limit ?,?");
-			pstmt.setInt(1, start-1);
-			pstmt.setInt(2, cnt);
+			pstmt=con.prepareStatement("select * from Q_pension where qp_pension=? order by qp_num desc limit ?,?");
+			pstmt.setInt(1, p_num);
+			pstmt.setInt(2, start-1);
+			pstmt.setInt(3, cnt);
 			rs=pstmt.executeQuery();//쿼리 수행
-			
-			if(rs.next()){
-				list=new ArrayList<Q_pension_Dto>();
-				do{
-					Q_pension_Dto dto=new Q_pension_Dto();
-					dto.setQp_num(rs.getInt("qp_num"));
-					dto.setQp_state(rs.getBoolean("qp_state"));
-					dto.setQp_title(rs.getString("qp_title"));
-					dto.setQp_question(rs.getString("qp_question"));
-					dto.setQp_id(rs.getString("qp_id"));
-					dto.setQp_date(rs.getDate("qp_date"));
-					dto.setQp_view(rs.getInt("qp_view"));
-					dto.setQp_answer(rs.getString("qp_answer"));
-					dto.setQp_pension(rs.getInt("qp_pension"));
-					list.add(dto);//list에 넣기
-					
-					
-				}while(rs.next());
-			}//if
+
+
+
+			while(rs.next()){
+				Q_pension_Dto dto=new Q_pension_Dto();
+				
+				dto.setQp_num(rs.getInt("qp_num"));
+				dto.setQp_state(rs.getBoolean("qp_state"));
+				dto.setQp_title(rs.getString("qp_title"));
+				dto.setQp_question(rs.getString("qp_question"));
+				dto.setQp_id(rs.getString("qp_id"));
+				dto.setQp_date(rs.getDate("qp_date"));
+				dto.setQp_view(rs.getInt("qp_view"));
+				dto.setQp_answer(rs.getString("qp_answer"));
+				dto.setQp_pension(rs.getInt("qp_pension"));
+				
+				list.add(dto);//list에 넣기
+			}
+
 		}catch(Exception ex){
 			System.out.println("getList() 예외:"+ex);
 		}finally{

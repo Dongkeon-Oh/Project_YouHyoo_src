@@ -64,7 +64,7 @@ public class Review {
 		}//finally
 	}//Insert_Review()
 	
-	public List List_Review(int pension_num){
+	public List<Review_Dto> List_Review(int pension_num){
 		List<Review_Dto> list=new ArrayList<Review_Dto>();
 		
 		try{
