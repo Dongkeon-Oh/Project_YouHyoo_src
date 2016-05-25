@@ -100,8 +100,6 @@ public class PensionDao {
 			pstmt.setInt(3, cnt);
 			rs=pstmt.executeQuery();//Äõ¸® ¼öÇà
 
-
-
 			while(rs.next()){
 				Q_pension_Dto dto=new Q_pension_Dto();
 				
@@ -305,6 +303,7 @@ public class PensionDao {
 			if(rs.next()){
 				
 				dto.setP_intro(rs.getString("p_intro"));
+				dto.setP_contect(rs.getString("p_contect"));
 				
 				dto.setRs_market(rs.getString("rs_market"));
 				dto.setRs_meal(rs.getString("rs_meal"));
