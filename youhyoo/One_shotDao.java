@@ -8,35 +8,25 @@ import javax.sql.*;
 import javax.naming.*;
 
 public class One_shotDao {
-	
-	private static final String DRIVER="com.mysql.jdbc.Driver";
-	private static final String URL="jdbc:mysql://localhost:3306/youhyoo";
-	private static final String USER="root";
-	private static final String PWD="12345";
-	
+
+		private Connection getConnection() throws Exception{
+			Context ct=new InitialContext();
+			DataSource ds=(DataSource)ct.lookup("java:comp/env/jdbc/mysql");
+			return ds.getConnection();
+		}//getConnection end
 	
 	Connection con=null;
 	Statement stmt=null;
 	ResultSet rs=null;
 	//생성자 : 초기화 작업
-	public One_shotDao(){
-		try{
-			Class.forName(DRIVER); //드라이버 로딩
-			System.out.println("드라이버 로딩 성공");
-		}catch(ClassNotFoundException ex1){
-			System.out.println("드라이버 로딩 실패:"+ex1);
-		}
-	}//생성자 end
 	
 	public List get_P_List(String sql){
 		
 		List <Pension_Dto>p_num=new ArrayList<Pension_Dto>();
 		
 		try{
-			con=DriverManager.getConnection(URL, USER, PWD);
+			con=getConnection();
 			stmt=con.createStatement();
-			System.out.println("select p_num,p_name,p_addr1,p_addr2 from pension where p_num=any(select distinct ra_pnum from detail_Around inner join detail_Facility on ra_pnum=rf_pnum inner join detail_Support on ra_pnum=rs_pnum inner join detail_Structure on ra_pnum=rr_pnum where "+sql);
-
 			rs=stmt.executeQuery("select p_num,p_name,p_addr1,p_addr2 from pension where p_num=any(select distinct ra_pnum from detail_Around inner join detail_Facility on ra_pnum=rf_pnum inner join detail_Support on ra_pnum=rs_pnum inner join detail_Structure on ra_pnum=rr_pnum where "+sql);
 			while(rs.next()){
 				Pension_Dto p_dto=new Pension_Dto();
@@ -66,7 +56,7 @@ public class One_shotDao {
 		
 		List <Room_Dto>r_list=new ArrayList<Room_Dto>();
 		try{
-			con=DriverManager.getConnection(URL, USER, PWD);
+			con=getConnection();
 			stmt=con.createStatement();
 			rs=stmt.executeQuery("select * from room inner join pension on p_num=r_pension where r_pension="+p_num);
 
