@@ -1,5 +1,7 @@
 package youhyoo;
 
+import java.util.*;
+
 public class OrderUser_Dto {
 	private int ou_num;
 	private String ou_customer;
@@ -10,6 +12,7 @@ public class OrderUser_Dto {
 	private String ou_cell;
 	private int ou_paytype;
 	private int ou_group;
+	private Date ou_date;
 	
 	public OrderUser_Dto(){}
 
@@ -84,4 +87,14 @@ public class OrderUser_Dto {
 	public void setOu_group(int ou_group) {
 		this.ou_group = ou_group;
 	}
+
+	public Date getOu_date() {
+		return ou_date;
+	}
+
+	public void setOu_date(Date ou_date) {
+		this.ou_date = ou_date;
+	}
+	
+	
 }

@@ -285,7 +285,7 @@ public class DetailMgr {
 		
 		try{
 			con=getConnection();
-			sql="insert into order_user values(0,?,?,?,?,?,?,?,?)";
+			sql="insert into order_user values(0,?,?,?,?,?,?,?,?,now())";		
 			pstmt=con.prepareStatement(sql);
 			
 		//	pstmt.setInt(1, 0);
