@@ -288,7 +288,7 @@ public class IndexMgr {
 		
 		//select * from order_room inner join order_user;
 		//select ou_num,o_date,o_pname,o_state,ou_customer,ou_cell,ou_id from order_room inner join order_user where ou_id='dj' and o_date between '2016-05-24' and '2016-05-31' order by o_date;
-		String sql="select distinct o_pname from order_room inner join"
+		String sql="select distinct o_pname,o_pnum from order_room inner join"
 				+" order_user where ou_id='"+u_id+"'"+" and ou_date between '"+sDate+"'"+
 				" and '"+eDate+"' order by ou_date";
 		Connection con=null;
@@ -320,6 +320,7 @@ public class IndexMgr {
 			OrderRoom_Dto order=new OrderRoom_Dto();
 			
 			order.setO_pname(rs.getString("o_pname"));
+			order.setO_pnum(rs.getInt("o_pnum"));
 			
 			o_list.add(order);
 			}
