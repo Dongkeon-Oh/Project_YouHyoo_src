@@ -42,7 +42,7 @@ public class IndexMgr {
 				if(locationchecker.equals("hot")){
 					sql="select * from Pension where p_addr2 like '"+location+"%' order by p_num desc";
 				}else{
-					sql="select * from Pension where p_addr1 like '"+location+"%' order by p_num desc";
+					sql="select * from Pension where p_addr1 like '"+locationchecker+"%' order by p_num desc";
 				}
 			}
 			stmt=con.createStatement();//생성시 인자 안들어 감
@@ -113,7 +113,43 @@ public class IndexMgr {
 	}//getIndexRoomList() end
 	
 	//--------------------	
-	// 3. 위시리스트 작성
+	// 3-1. 위시리스트 확인 (중복체크을 위해 확인이 필요)
+	//--------------------
+	public Boolean checkWishlist(String userId, int roomNumber){// throws Exception{
+        Connection con=null;
+  	    PreparedStatement pstmt=null;
+  	    ResultSet rs=null;
+  	    String sql = null; 
+  	    Boolean wishChecker=false;
+  	    
+  	    try{
+  			con=getConnection();
+  			
+	  		sql= "select count(*) total from wishlist where w_id=? and w_pnum=?";
+	  		pstmt = con.prepareStatement(sql);
+	  		pstmt.setString(1, userId);
+	  		pstmt.setInt(2, roomNumber);
+	        rs = pstmt.executeQuery();
+	        if(rs.next()){  
+	        	if(rs.getInt("total")==0){
+	        		wishChecker=true;
+	        	}
+	        }//while end 
+  			
+  	    }catch(Exception ex){
+  	    	System.out.println("checkWishlist() 예외 :"+ex);
+  	    }finally{
+  	    	try{
+  	    		if(rs!=null){rs.close();}
+  	    		if(pstmt!=null){pstmt.close();}
+  	    		if(con!=null){con.close();}
+  	    	}catch(Exception ex){}
+  	    }//finally end
+  	    return wishChecker;
+	}//checkWishlist() end
+	
+	//--------------------	
+	// 3-2. 위시리스트 작성
 	//--------------------
 	public void setWishlist(String userId, int roomNumber){
 		String sql="insert into wishlist values('"+userId+"',"+roomNumber+")";
