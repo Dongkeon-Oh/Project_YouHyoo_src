@@ -398,7 +398,7 @@ public class IndexMgr {
 	}//getOrderRoom() end
 	
 	//--------------------	
-	// 8-2. 예약 상세정보 얻기(객실) 
+	// 8-2. 예약 상세정보 얻기(유저) 
 	//--------------------
 	public OrderUser_Dto getOrderUser(int ou_num){
 		//select * from order_user where ou_num=1;
@@ -423,7 +423,8 @@ public class IndexMgr {
 				ou.setOu_request(rs.getString("ou_request"));
 				ou.setOu_id(rs.getString("ou_id"));
 				ou.setOu_cell(rs.getString("ou_cell"));
-				ou.setOu_paytype(rs.getInt("ou_paytype"));	
+				ou.setOu_paytype(rs.getInt("ou_paytype"));
+				ou.setOu_date(rs.getDate("ou_date"));
 			}
 
 		}catch(Exception ex){
@@ -579,4 +580,71 @@ public class IndexMgr {
 		return rList;
 	}//getDRList()
 	
+	//select o_group,sum(o_price) from order_room where o_group=any(select ou_num from order_user where ou_id='dj') group by o_group;
+	//--------------------	
+	// 12. 적립금 내역 얻기(적립금)
+	//--------------------
+	public List<OrderRoom_Dto> getPoint(String u_id){
+		Connection con=null;
+		ResultSet rs=null;
+		Statement stmt=null;
+		
+		List<OrderRoom_Dto> pList=new ArrayList<OrderRoom_Dto>();
+		try{
+			
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();
+			String sql="select o_group,sum(o_price) from order_room where o_group="
+					+ "any(select ou_num from order_user where ou_id='"+u_id+"') group by o_group";
+			rs=stmt.executeQuery(sql);
+			while(rs.next()){
+				OrderRoom_Dto o=new OrderRoom_Dto();
+				o.setO_group(rs.getInt("o_group"));
+				o.setO_price(rs.getInt("sum(o_price)")/50);		
+				pList.add(o);
+			}//while
+		}catch(Exception ex){
+			System.out.println("getPoint() 예외"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}
+		return pList;
+	}//getPoint
+	
+	//--------------------	
+	// 13. 적립금 내역 얻기2(일자,예약번호)
+	//--------------------
+	public List<OrderUser_Dto> getPuser(String u_id){
+		Connection con=null;
+		ResultSet rs=null;
+		Statement stmt=null;
+		
+		List<OrderUser_Dto> uList=new ArrayList<OrderUser_Dto>();
+		try{
+			
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();
+			String sql="select ou_num,ou_date from order_user where ou_id='"+u_id+"' order by ou_num desc";
+			rs=stmt.executeQuery(sql);
+			while(rs.next()){
+				OrderUser_Dto ou=new OrderUser_Dto();
+				ou.setOu_num(rs.getInt("ou_num"));
+				ou.setOu_date(rs.getDate("ou_date"));		
+				uList.add(ou);
+			}//while
+		}catch(Exception ex){
+			System.out.println("getPoint() 예외"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}
+		return uList;
+	}//getPoint
 }
