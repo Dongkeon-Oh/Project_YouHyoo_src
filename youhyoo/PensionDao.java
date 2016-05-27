@@ -283,7 +283,7 @@ public class PensionDao {
 				dto.setQy_content(rs.getString("qy_content"));
 				dto.setQy_id(rs.getString("qy_id"));
 				dto.setQy_date(rs.getDate("qy_date"));
-				dto.setQy_state(rs.getInt("qy_state"));
+				dto.setQy_state(rs.getBoolean("qy_state"));
 				dto.setQy_answer(rs.getString("qy_answer"));
 					
 				list.add(dto);//list¿¡ ³Ö±â
