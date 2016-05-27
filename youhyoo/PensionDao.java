@@ -254,7 +254,7 @@ public class PensionDao {
 		}
 	}//insertPension end
 	
-	public void Q_ToYouHyoo(Q_Youhyoo_Dto dto) throws Exception{
+	public void insertQ_youhyoo(Q_Youhyoo_Dto dto) throws Exception{
 			
 			Connection con=null;
 			PreparedStatement pstmt=null;

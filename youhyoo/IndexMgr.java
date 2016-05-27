@@ -290,7 +290,7 @@ public class IndexMgr {
 		//select ou_num,o_date,o_pname,o_state,ou_customer,ou_cell,ou_id from order_room inner join order_user where ou_id='dj' and o_date between '2016-05-24' and '2016-05-31' order by o_date;
 		String sql="select distinct o_pname,o_pnum from order_room inner join"
 				+" order_user where ou_id='"+u_id+"'"+" and ou_date between '"+sDate+"'"+
-				" and '"+eDate+"' order by ou_date";
+				" and '"+eDate+"' order by ou_num desc";
 		Connection con=null;
 		ResultSet rs=null;
 		PreparedStatement pstmt=null;
@@ -345,7 +345,7 @@ public class IndexMgr {
 		
 		String sql="select ou_num,ou_customer,ou_cell,ou_date from"
 				+" order_user where ou_id='"+u_id+"'"+" and ou_date between '"+sDate+"'"+
-				" and '"+eDate+"' order by ou_date";
+				" and '"+eDate+"' order by ou_num desc";
 		/*
 		String sql="select ou_num,ou_customer,ou_cell,ou_id,o_date,o_rname from order_room inner join"
 				+" order_user where ou_id='"+u_id+"'"+" and o_date between '"+sDate+"'"+
