@@ -27,12 +27,15 @@ public class One_shotDao {
 		try{
 			con=getConnection();
 			stmt=con.createStatement();
-			System.out.println("select p_num,p_name,p_addr1,p_addr2 from pension where p_num=any(select distinct ra_pnum from detail_Around inner join detail_Facility on ra_pnum=rf_pnum inner join detail_Support on ra_pnum=rs_pnum inner join detail_Structure on ra_pnum=rr_pnum where ra_pnum Not in(select o_pnum from order_room where o_date="+sql);
-			System.out.println("-----------"+sql);
-			
-			rs=stmt.executeQuery("select p_num,p_name,p_addr1,p_addr2 from pension where p_num=any(select distinct ra_pnum from detail_Around inner join detail_Facility on ra_pnum=rf_pnum inner join detail_Support on ra_pnum=rs_pnum inner join detail_Structure on ra_pnum=rr_pnum where ra_pnum Not in(select o_pnum from order_room where o_date="+sql);
-			
-				
+
+			rs=stmt.executeQuery("select p_num,p_name,p_addr1,p_addr2 from pension"
+					+ " where p_num=any(select distinct ra_pnum from detail_Around"
+					+ " inner join detail_Facility on ra_pnum=rf_pnum"
+					+ " inner join detail_Support on ra_pnum=rs_pnum"
+					+ " inner join detail_Structure on ra_pnum=rr_pnum"
+					+ " inner join room on ra_pnum=r_pension"
+					+ " where r_num Not in(select o_rnum from order_room where o_date="+sql);			
+		
 			while(rs.next()){
 				
 				Pension_Dto p_dto=new Pension_Dto();
@@ -43,8 +46,7 @@ public class One_shotDao {
 				p_dto.setP_name(rs.getString("p_name"));
 				p_dto.setP_addr1(rs.getString("p_addr1"));
 				p_dto.setP_addr2(rs.getString("p_addr2"));
-				
-				System.out.println("rs.getRow():"+rs.getRow());
+
 				
 				p_num.add(p_dto);
 			}//while
@@ -60,13 +62,16 @@ public class One_shotDao {
 		return p_num;
 	}//getList()
 	
-	public List get_R_List(int p_num){
+	public List get_R_List(int p_num,int member,String date){
 		
 		List <Room_Dto>r_list=new ArrayList<Room_Dto>();
 		try{
 			con=getConnection();
 			stmt=con.createStatement();
-			rs=stmt.executeQuery("select * from room inner join pension on p_num=r_pension where r_pension="+p_num);
+
+			rs=stmt.executeQuery("select * from room inner join pension on p_num=r_pension"
+					+ " where r_pension="+p_num+" and"
+					+ " r_num  Not in (select o_rnum from order_room where o_date="+date+"r_maxcapa>="+member );
 
 			while(rs.next()){
 				Room_Dto r_dto=new Room_Dto();

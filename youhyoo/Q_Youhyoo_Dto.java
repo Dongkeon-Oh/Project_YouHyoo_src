@@ -9,6 +9,19 @@ public class Q_Youhyoo_Dto {
 	private Date qy_date;
 	private Boolean qy_state;
 	private String qy_answer;
+
+	public Boolean getQy_state() {
+		return qy_state;
+	}
+	public void setQy_state(Boolean qy_state) {
+		this.qy_state = qy_state;
+	}
+	public String getQy_answer() {
+		return qy_answer;
+	}
+	public void setQy_answer(String qy_answer) {
+		this.qy_answer = qy_answer;
+	}
 	public int getQy_num() {
 		return qy_num;
 	}
@@ -38,18 +51,6 @@ public class Q_Youhyoo_Dto {
 	}
 	public void setQy_date(Date qy_date) {
 		this.qy_date = qy_date;
-	}
-	public Boolean getQy_state() {
-		return qy_state;
-	}
-	public void setQy_state(Boolean qy_state) {
-		this.qy_state = qy_state;
-	}
-	public String getQy_answer() {
-		return qy_answer;
-	}
-	public void setQy_answer(String qy_answer) {
-		this.qy_answer = qy_answer;
 	}
 	
 }
