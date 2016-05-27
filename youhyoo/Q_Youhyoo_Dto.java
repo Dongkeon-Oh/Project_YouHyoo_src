@@ -7,7 +7,7 @@ public class Q_Youhyoo_Dto {
 	private String qy_content;
 	private String qy_id;
 	private Date qy_date;
-	private int qy_state;
+	private Boolean qy_state;
 	private String qy_answer;
 	
 	public String getQy_answer() {

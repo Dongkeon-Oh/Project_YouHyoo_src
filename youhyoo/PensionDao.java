@@ -244,8 +244,8 @@ public class PensionDao {
 				pstmt.setString(2, dto.getQy_title());
 				pstmt.setString(3, dto.getQy_content());
 				pstmt.setString(4, dto.getQy_id());
-				pstmt.setInt(4, 0);
-				pstmt.setString(5, dto.getQy_answer());
+				pstmt.setBoolean(5, true);
+				pstmt.setString(6, dto.getQy_answer());
 				pstmt.executeUpdate();
 				
 			}catch(Exception ex){
