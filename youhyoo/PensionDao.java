@@ -100,8 +100,6 @@ public class PensionDao {
 			pstmt.setInt(3, cnt);
 			rs=pstmt.executeQuery();//Äõ¸® ¼öÇà
 
-
-
 			while(rs.next()){
 				Q_pension_Dto dto=new Q_pension_Dto();
 				
@@ -287,7 +285,9 @@ public class PensionDao {
 				}catch(Exception exx){}
 			}//finally end
 		}//insertQuestion end
-
+	
+	
+	
 	public InsertDto PensionDetail(int p_num) throws Exception{
 		Connection con=null;
 		PreparedStatement pstmt=null;
