@@ -3,7 +3,8 @@ import java.util.*;
 
 public class Q_Youhyoo_Dto {
 	private int qy_num;
-	private String qy_question;
+	private String qy_title;
+	private String qy_content;
 	private String qy_id;
 	private Date qy_date;
 	private int qy_state;
@@ -21,11 +22,17 @@ public class Q_Youhyoo_Dto {
 	public void setQy_num(int qy_num) {
 		this.qy_num = qy_num;
 	}
-	public String getQy_question() {
-		return qy_question;
+	public String getQy_title() {
+		return qy_title;
 	}
-	public void setQy_question(String qy_question) {
-		this.qy_question = qy_question;
+	public void setQy_title(String qy_title) {
+		this.qy_title = qy_title;
+	}
+	public String getQy_content() {
+		return qy_content;
+	}
+	public void setQy_content(String qy_content) {
+		this.qy_content = qy_content;
 	}
 	public String getQy_id() {
 		return qy_id;
