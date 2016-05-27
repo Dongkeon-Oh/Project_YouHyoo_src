@@ -189,9 +189,10 @@ public class DetailMgr {
 	public void insertOrderRoom(OrderRoom_Dto dto){// throws Exception{
 		Connection con=null;
 		PreparedStatement pstmt=null;
+		PreparedStatement pstmt2=null;
 		ResultSet rs=null;
 		String sql="";
-		
+		String sql2="";
 		try{
 			con=getConnection();
 			sql="insert into order_room values(0,?,?,?,?,?,?,?,?,?,?)";
@@ -208,8 +209,12 @@ public class DetailMgr {
 			pstmt.setInt(8, dto.getO_price());
 			pstmt.setBoolean(9, dto.getO_state());
 			pstmt.setInt(10, dto.getO_group());
-			
 			pstmt.executeUpdate();
+			
+			int point=dto.getO_price()/50;
+			sql2="update user set u_point=u_point+"+point;
+			pstmt2=con.prepareStatement(sql2);
+			pstmt2.executeUpdate();
 			
 		}catch(Exception ex){
 			System.out.println("insertOrderRoom() ¿¹¿Ü : "+ex);
@@ -285,7 +290,7 @@ public class DetailMgr {
 		
 		try{
 			con=getConnection();
-			sql="insert into order_user values(0,?,?,?,?,?,?,?,?)";
+			sql="insert into order_user values(0,?,?,?,?,?,?,?,?,now())";		
 			pstmt=con.prepareStatement(sql);
 			
 		//	pstmt.setInt(1, 0);
