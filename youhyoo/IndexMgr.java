@@ -5,6 +5,8 @@ import java.sql.*;
 import javax.sql.*;
 import javax.naming.*;
 
+import sun.org.mozilla.javascript.internal.regexp.SubString;
+
 import java.util.*;
 
 public class IndexMgr {
@@ -480,12 +482,12 @@ public class IndexMgr {
 	//--------------------	
 	// 9. 질문리스트 얻기
 	//--------------------
-	public List<Q_pension_Dto> getQList(String u_id){
-		String sql="select * from Q_pension where qp_id="+"'"+u_id+"'";
+	public List<Q_Youhyoo_Dto> getQList(String u_id){
+		String sql="select * from Q_Youhyoo where qy_id="+"'"+u_id+"' order by qy_num desc";
 		Connection con=null;
 		ResultSet rs=null;
 		PreparedStatement pstmt=null;
-		List<Q_pension_Dto> q_list=new ArrayList<Q_pension_Dto>();	
+		List<Q_Youhyoo_Dto> q_list=new ArrayList<Q_Youhyoo_Dto>();	
 
 		try{
 			//처리내용
@@ -494,17 +496,16 @@ public class IndexMgr {
 			rs = pstmt.executeQuery();
 
 			while(rs.next()){
-				Q_pension_Dto dto=new Q_pension_Dto();
+				Q_Youhyoo_Dto dto=new Q_Youhyoo_Dto();
 				
-				dto.setQp_num(rs.getInt("qp_num"));
-				dto.setQp_state(rs.getBoolean("qp_state"));
-				dto.setQp_title(rs.getString("qp_title"));
-				dto.setQp_question(rs.getString("qp_question"));
-				dto.setQp_id(rs.getString("qp_id"));
-				dto.setQp_date(rs.getDate("qp_date"));
-				dto.setQp_view(rs.getInt("qp_view"));
-				dto.setQp_answer(rs.getString("qp_answer"));
-				dto.setQp_pension(rs.getInt("qp_pension"));
+				dto.setQy_num(rs.getInt("qy_num"));
+				dto.setQy_state(rs.getBoolean("qy_state"));
+				dto.setQy_title(rs.getString("qy_title"));
+				dto.setQy_content(rs.getString("qy_content"));
+				dto.setQy_id(rs.getString("qy_id"));
+				dto.setQy_date(rs.getDate("qy_date"));
+				dto.setQy_answer(rs.getString("qy_answer"));
+				
 				
 				q_list.add(dto);//list에 넣기
 			}
@@ -538,8 +539,9 @@ public class IndexMgr {
 		try{
 			con=getConnection();//커넥션 얻기
 			stmt=con.createStatement();
+			String loca=location.substring(0,2);
 			String sql="select p_num,p_name,p_addr1,p_addr2 from pension where p_addr1 like "
-					+ "'"+location+"%' or p_addr2 like '"+location+"%'";
+					+ "'"+loca+"%' or p_addr2 like '"+loca+"%'";
 			rs=stmt.executeQuery(sql);
 			while(rs.next()){
 				Pension_Dto p_dto=new Pension_Dto();
