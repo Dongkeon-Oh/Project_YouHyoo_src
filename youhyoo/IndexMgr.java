@@ -35,7 +35,7 @@ public class IndexMgr {
 		//처리내용 
 			con=getConnection();//커넥션 얻기
 			if(location.equals("index")){
-				sql="select * from Pension order by p_num desc";
+				sql="select * from Pension order by p_num desc limit 0, 12";
 			}else{
 				String locationchecker=location.substring(0, 3);
 				location=location.substring(3, location.length());
