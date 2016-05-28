@@ -226,34 +226,6 @@ public class PensionDao {
 		return dto;
 	}//updateGetPension end
 	
-	public void insertPension(Q_Youhyoo_Dto dto) throws Exception{
-		Connection con=null;
-		PreparedStatement pstmt=null;
-		ResultSet rs=null;
-		String sql="";
-		
-		try{
-			con=getConnection();
-			sql="insert into Q_youhyoo(qy_num,qy_question,qy_id,qy_date,qy_state) " +
-			"values(?,?,?,NOW(),?)";
-			pstmt.setInt(1, dto.getQy_num());
-			pstmt.setString(2, dto.getQy_question());
-			pstmt.setString(3, dto.getQy_id());
-			pstmt.setInt(4, dto.getQy_state());
-			
-		}catch(Exception ex){
-			System.out.println("insertPension() 예외 : "+ex);
-		}finally{
-			try{
-				if(rs!=null){rs.close();}
-				if(pstmt!=null){pstmt.close();}
-				if(con!=null){con.close();}
-			}catch(Exception exx){
-				
-			}
-		}
-	}//insertPension end
-	
 	public void Q_ToYouHyoo(Q_Youhyoo_Dto dto) throws Exception{
 			
 			Connection con=null;
@@ -264,15 +236,16 @@ public class PensionDao {
 			
 			try{
 				con=getConnection();
-				sql="insert into Q_youhyoo(qy_num,qy_question,qy_id,qy_date,qy_state,qy_answer)"+
-						"values(?,?,?,NOW(),?,?)";
+				sql="insert into Q_youhyoo(qy_num,qy_title,qy_content,qy_id,qy_date,qy_state,qy_answer)"+
+						"values(?,?,?,?,NOW(),?,?)";
 				pstmt=con.prepareStatement(sql);
 				
 				pstmt.setInt(1, dto.getQy_num());
-				pstmt.setString(2, dto.getQy_question());
-				pstmt.setString(3, dto.getQy_id());
-				pstmt.setInt(4, 0);
-				pstmt.setString(5, dto.getQy_answer());
+				pstmt.setString(2, dto.getQy_title());
+				pstmt.setString(3, dto.getQy_content());
+				pstmt.setString(4, dto.getQy_id());
+				pstmt.setBoolean(5, true);
+				pstmt.setString(6, dto.getQy_answer());
 				pstmt.executeUpdate();
 				
 			}catch(Exception ex){
@@ -285,7 +258,49 @@ public class PensionDao {
 				}catch(Exception exx){}
 			}//finally end
 		}//insertQuestion end
+	
+	//일대일 상담문의 리스트
+	public List<Q_Youhyoo_Dto> QyhList(int start,int cnt, int qy_num) throws Exception{
+		//mysql에서 int start(시작 위치),int end(갯수)
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		List <Q_Youhyoo_Dto>list=new ArrayList<Q_Youhyoo_Dto>();
+		try{
+			//처리문
+			con=getConnection();//커넥션 얻기
+			pstmt=con.prepareStatement("select * from Q_youhyoo where qy_id=? order by qy_num desc limit ?,?");
+			pstmt.setInt(1, qy_num);
+			pstmt.setInt(2, start-1);
+			pstmt.setInt(3, cnt);
+			rs=pstmt.executeQuery();//쿼리 수행
 
+			while(rs.next()){
+				Q_Youhyoo_Dto dto=new Q_Youhyoo_Dto();
+					
+				dto.setQy_num(rs.getInt("qp_num"));
+				dto.setQy_title(rs.getString("qy_title"));
+				dto.setQy_content(rs.getString("qy_content"));
+				dto.setQy_id(rs.getString("qy_id"));
+				dto.setQy_date(rs.getDate("qy_date"));
+				dto.setQy_state(rs.getBoolean("qy_state"));
+				dto.setQy_answer(rs.getString("qy_answer"));
+					
+				list.add(dto);//list에 넣기
+			}
+
+		}catch(Exception ex){
+			System.out.println("getList() 예외:"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}//finally end
+		return list;//***
+	}//QyhList end
+	
 	public InsertDto PensionDetail(int p_num) throws Exception{
 		Connection con=null;
 		PreparedStatement pstmt=null;
@@ -303,7 +318,6 @@ public class PensionDao {
 			if(rs.next()){
 				
 				dto.setP_intro(rs.getString("p_intro"));
-				dto.setP_contect(rs.getString("p_contect"));
 				
 				dto.setRs_market(rs.getString("rs_market"));
 				dto.setRs_meal(rs.getString("rs_meal"));
@@ -404,5 +418,4 @@ public class PensionDao {
 		return r_list;
 	}// get_room_photo()
 	
-
 }

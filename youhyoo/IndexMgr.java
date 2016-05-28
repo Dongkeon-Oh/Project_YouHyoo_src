@@ -5,6 +5,8 @@ import java.sql.*;
 import javax.sql.*;
 import javax.naming.*;
 
+import sun.org.mozilla.javascript.internal.regexp.SubString;
+
 import java.util.*;
 
 public class IndexMgr {
@@ -288,9 +290,9 @@ public class IndexMgr {
 		
 		//select * from order_room inner join order_user;
 		//select ou_num,o_date,o_pname,o_state,ou_customer,ou_cell,ou_id from order_room inner join order_user where ou_id='dj' and o_date between '2016-05-24' and '2016-05-31' order by o_date;
-		String sql="select distinct o_pname from order_room inner join"
+		String sql="select distinct o_pname,o_pnum from order_room inner join"
 				+" order_user where ou_id='"+u_id+"'"+" and ou_date between '"+sDate+"'"+
-				" and '"+eDate+"' order by ou_date";
+				" and '"+eDate+"' order by ou_num desc";
 		Connection con=null;
 		ResultSet rs=null;
 		PreparedStatement pstmt=null;
@@ -320,6 +322,7 @@ public class IndexMgr {
 			OrderRoom_Dto order=new OrderRoom_Dto();
 			
 			order.setO_pname(rs.getString("o_pname"));
+			order.setO_pnum(rs.getInt("o_pnum"));
 			
 			o_list.add(order);
 			}
@@ -344,7 +347,7 @@ public class IndexMgr {
 		
 		String sql="select ou_num,ou_customer,ou_cell,ou_date from"
 				+" order_user where ou_id='"+u_id+"'"+" and ou_date between '"+sDate+"'"+
-				" and '"+eDate+"' order by ou_date";
+				" and '"+eDate+"' order by ou_num desc";
 		/*
 		String sql="select ou_num,ou_customer,ou_cell,ou_id,o_date,o_rname from order_room inner join"
 				+" order_user where ou_id='"+u_id+"'"+" and o_date between '"+sDate+"'"+
@@ -434,7 +437,7 @@ public class IndexMgr {
 	}//getOrderRoom() end
 	
 	//--------------------	
-	// 8-2. 예약 상세정보 얻기(객실) 
+	// 8-2. 예약 상세정보 얻기(유저) 
 	//--------------------
 	public OrderUser_Dto getOrderUser(int ou_num){
 		//select * from order_user where ou_num=1;
@@ -459,7 +462,8 @@ public class IndexMgr {
 				ou.setOu_request(rs.getString("ou_request"));
 				ou.setOu_id(rs.getString("ou_id"));
 				ou.setOu_cell(rs.getString("ou_cell"));
-				ou.setOu_paytype(rs.getInt("ou_paytype"));	
+				ou.setOu_paytype(rs.getInt("ou_paytype"));
+				ou.setOu_date(rs.getDate("ou_date"));
 			}
 
 		}catch(Exception ex){
@@ -478,12 +482,12 @@ public class IndexMgr {
 	//--------------------	
 	// 9. 질문리스트 얻기
 	//--------------------
-	public List<Q_pension_Dto> getQList(String u_id){
-		String sql="select * from Q_pension where qp_id="+"'"+u_id+"'";
+	public List<Q_Youhyoo_Dto> getQList(String u_id){
+		String sql="select * from Q_Youhyoo where qy_id="+"'"+u_id+"' order by qy_num desc";
 		Connection con=null;
 		ResultSet rs=null;
 		PreparedStatement pstmt=null;
-		List<Q_pension_Dto> q_list=new ArrayList<Q_pension_Dto>();	
+		List<Q_Youhyoo_Dto> q_list=new ArrayList<Q_Youhyoo_Dto>();	
 
 		try{
 			//처리내용
@@ -492,17 +496,16 @@ public class IndexMgr {
 			rs = pstmt.executeQuery();
 
 			while(rs.next()){
-				Q_pension_Dto dto=new Q_pension_Dto();
+				Q_Youhyoo_Dto dto=new Q_Youhyoo_Dto();
 				
-				dto.setQp_num(rs.getInt("qp_num"));
-				dto.setQp_state(rs.getBoolean("qp_state"));
-				dto.setQp_title(rs.getString("qp_title"));
-				dto.setQp_question(rs.getString("qp_question"));
-				dto.setQp_id(rs.getString("qp_id"));
-				dto.setQp_date(rs.getDate("qp_date"));
-				dto.setQp_view(rs.getInt("qp_view"));
-				dto.setQp_answer(rs.getString("qp_answer"));
-				dto.setQp_pension(rs.getInt("qp_pension"));
+				dto.setQy_num(rs.getInt("qy_num"));
+				dto.setQy_state(rs.getBoolean("qy_state"));
+				dto.setQy_title(rs.getString("qy_title"));
+				dto.setQy_content(rs.getString("qy_content"));
+				dto.setQy_id(rs.getString("qy_id"));
+				dto.setQy_date(rs.getDate("qy_date"));
+				dto.setQy_answer(rs.getString("qy_answer"));
+				
 				
 				q_list.add(dto);//list에 넣기
 			}
@@ -536,8 +539,9 @@ public class IndexMgr {
 		try{
 			con=getConnection();//커넥션 얻기
 			stmt=con.createStatement();
+			String loca=location.substring(0,2);
 			String sql="select p_num,p_name,p_addr1,p_addr2 from pension where p_addr1 like "
-					+ "'"+location+"%' or p_addr2 like '"+location+"%'";
+					+ "'"+loca+"%' or p_addr2 like '"+loca+"%'";
 			rs=stmt.executeQuery(sql);
 			while(rs.next()){
 				Pension_Dto p_dto=new Pension_Dto();
@@ -615,4 +619,71 @@ public class IndexMgr {
 		return rList;
 	}//getDRList()
 	
+	//select o_group,sum(o_price) from order_room where o_group=any(select ou_num from order_user where ou_id='dj') group by o_group;
+	//--------------------	
+	// 12. 적립금 내역 얻기(적립금)
+	//--------------------
+	public List<OrderRoom_Dto> getPoint(String u_id){
+		Connection con=null;
+		ResultSet rs=null;
+		Statement stmt=null;
+		
+		List<OrderRoom_Dto> pList=new ArrayList<OrderRoom_Dto>();
+		try{
+			
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();
+			String sql="select o_group,sum(o_price) from order_room where o_group="
+					+ "any(select ou_num from order_user where ou_id='"+u_id+"') group by o_group";
+			rs=stmt.executeQuery(sql);
+			while(rs.next()){
+				OrderRoom_Dto o=new OrderRoom_Dto();
+				o.setO_group(rs.getInt("o_group"));
+				o.setO_price(rs.getInt("sum(o_price)")/50);		
+				pList.add(o);
+			}//while
+		}catch(Exception ex){
+			System.out.println("getPoint() 예외"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}
+		return pList;
+	}//getPoint
+	
+	//--------------------	
+	// 13. 적립금 내역 얻기2(일자,예약번호)
+	//--------------------
+	public List<OrderUser_Dto> getPuser(String u_id){
+		Connection con=null;
+		ResultSet rs=null;
+		Statement stmt=null;
+		
+		List<OrderUser_Dto> uList=new ArrayList<OrderUser_Dto>();
+		try{
+			
+			con=getConnection();//커넥션 얻기
+			stmt=con.createStatement();
+			String sql="select ou_num,ou_date from order_user where ou_id='"+u_id+"' order by ou_num desc";
+			rs=stmt.executeQuery(sql);
+			while(rs.next()){
+				OrderUser_Dto ou=new OrderUser_Dto();
+				ou.setOu_num(rs.getInt("ou_num"));
+				ou.setOu_date(rs.getDate("ou_date"));		
+				uList.add(ou);
+			}//while
+		}catch(Exception ex){
+			System.out.println("getPoint() 예외"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}
+		return uList;
+	}//getPoint
 }

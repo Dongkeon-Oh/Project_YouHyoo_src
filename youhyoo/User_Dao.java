@@ -1,7 +1,6 @@
 package youhyoo;
 import java.sql.*;
 import java.util.*;
-
 import javax.sql.*; //DataSource
 import javax.naming.*; //lookup
 
@@ -128,8 +127,7 @@ public class User_Dao {
 			con=getConnection(); //커넥션 얻기 
 			pstmt=con.prepareStatement("select * from user where u_id=?");
 			pstmt.setString(1, u_id);
-			rs=pstmt.executeQuery(); //쿼리 수행 
-			
+			rs=pstmt.executeQuery(); //쿼리 수행 			
 			if(rs.next()){
 				dbPwd=rs.getString("u_pwd");
 				if(u_pwd.equals(dbPwd)){
@@ -152,7 +150,63 @@ public class User_Dao {
 		return x;
 	}//userCheck()
 	
+	//아이디 찾기
+	public String searchId(String u_name, String u_cell) throws Exception{
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		String id="";
+		
+		try{
+			con=getConnection(); //커넥션 얻는다
+			pstmt=con.prepareStatement("select u_id from user where u_name=? and u_cell=?");
+			pstmt.setString(1, u_name);
+			pstmt.setString(2, u_cell);
+			
+			rs=pstmt.executeQuery(); //쿼리 수행 
+			if(rs.next()){
+				id=rs.getString("u_id");
+			}
+		}catch(Exception ex){
+			System.out.println("searchId() 오류:"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}
+		return id;
+	}//
 
+	//비밀번호 찾기 
+	public String searchPwd(String u_id, String u_name) throws Exception{
+		Connection con=null;
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		String pwd="";
+		try{
+			con=getConnection(); 
+			pstmt=con.prepareStatement("select u_pwd from user where u_id=? and u_name=?");
+			pstmt.setString(1, u_id);
+			pstmt.setString(2, u_name);
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()){
+				pwd=rs.getString("u_pwd");
+			}
+		}catch(Exception ex){
+			System.out.println("searchPwd() 오류:"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception exx){}
+		}
+		return pwd;
+	}//
+	
 	//회원정보 수정 : 웹에 출력
 	public User_Dto getUser(String u_id) throws Exception{
 		Connection con=null;

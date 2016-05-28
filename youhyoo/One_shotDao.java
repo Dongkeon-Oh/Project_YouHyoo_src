@@ -20,15 +20,23 @@ public class One_shotDao {
 	ResultSet rs=null;
 	//생성자 : 초기화 작업
 	
-	public List get_P_List(String sql){
-		
+	public List get_P_List(String sql){	
 		List <Pension_Dto>p_num=new ArrayList<Pension_Dto>();
 		
 		try{
 			con=getConnection();
 			stmt=con.createStatement();
-			rs=stmt.executeQuery("select p_num,p_name,p_addr1,p_addr2 from pension where p_num=any(select distinct ra_pnum from detail_Around inner join detail_Facility on ra_pnum=rf_pnum inner join detail_Support on ra_pnum=rs_pnum inner join detail_Structure on ra_pnum=rr_pnum where "+sql);
+
+			rs=stmt.executeQuery("select p_num,p_name,p_addr1,p_addr2 from pension"
+					+ " where p_num=any(select distinct ra_pnum from detail_Around"
+					+ " inner join detail_Facility on ra_pnum=rf_pnum"
+					+ " inner join detail_Support on ra_pnum=rs_pnum"
+					+ " inner join detail_Structure on ra_pnum=rr_pnum"
+					+ " inner join room on ra_pnum=r_pension"
+					+ " where r_num Not in(select o_rnum from order_room where o_date="+sql);			
+		
 			while(rs.next()){
+				
 				Pension_Dto p_dto=new Pension_Dto();
 				
 				//업소,  
@@ -37,6 +45,7 @@ public class One_shotDao {
 				p_dto.setP_name(rs.getString("p_name"));
 				p_dto.setP_addr1(rs.getString("p_addr1"));
 				p_dto.setP_addr2(rs.getString("p_addr2"));
+
 				
 				p_num.add(p_dto);
 			}//while
@@ -52,13 +61,15 @@ public class One_shotDao {
 		return p_num;
 	}//getList()
 	
-	public List get_R_List(int p_num){
-		
+	public List get_R_List(int p_num,int member,String date){
 		List <Room_Dto>r_list=new ArrayList<Room_Dto>();
 		try{
 			con=getConnection();
 			stmt=con.createStatement();
-			rs=stmt.executeQuery("select * from room inner join pension on p_num=r_pension where r_pension="+p_num);
+
+			rs=stmt.executeQuery("select * from room inner join pension on p_num=r_pension"
+					+ " where r_pension="+p_num+" and"
+					+ " r_num  Not in (select o_rnum from order_room where o_date="+date+"r_maxcapa>="+member );
 
 			while(rs.next()){
 				Room_Dto r_dto=new Room_Dto();
@@ -90,5 +101,35 @@ public class One_shotDao {
 		}
 		return r_list;
 	}//getList()
+	
+	public List top_Search_List(String search){
+		List<Pension_Dto> s_list=new ArrayList<Pension_Dto>();
+		try{
+			con=getConnection();
+			stmt=con.createStatement();
+			String sql="select p_num,p_name,p_addr1,p_addr2 from pension where p_name like '%"+search+"%'";
+			rs=stmt.executeQuery(sql);
+			
+			while(rs.next()){
+				Pension_Dto p_dto=new Pension_Dto();
+				
+				p_dto.setP_num(rs.getInt("p_num"));
+				p_dto.setP_name(rs.getString("p_name"));
+				p_dto.setP_addr1(rs.getString("p_addr1"));
+				p_dto.setP_addr2(rs.getString("p_addr2"));
+				
+				s_list.add(p_dto);				
+			}//while
+		}catch(Exception ex){
+			System.out.println("top_Search_List() 오류"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+				}catch(Exception exx){}
+			}//finally
+		return s_list;
+	}//top_Search_List()
 }//class
 
