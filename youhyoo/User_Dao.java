@@ -121,17 +121,23 @@ public class User_Dao {
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		String dbPwd="";
+		String userType="";
 		int x=-1;
 		
 		try{
 			con=getConnection(); //커넥션 얻기 
-			pstmt=con.prepareStatement("select * from user where u_id=?");
+			pstmt=con.prepareStatement("select u_id, u_pwd, u_type from user where u_id=?");
 			pstmt.setString(1, u_id);
 			rs=pstmt.executeQuery(); //쿼리 수행 			
 			if(rs.next()){
 				dbPwd=rs.getString("u_pwd");
+				userType=rs.getString("u_type");
 				if(u_pwd.equals(dbPwd)){
-					x=1; //인증 성공
+					if(userType.equals("ad")){
+						x=2; //인증 성공 관리자, 비지니스 파트너
+					}else{
+						x=1; //인증 성공 일반 유저
+					}
 				}else{
 					x=0; //암호 틀림 
 				}

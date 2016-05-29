@@ -11,7 +11,7 @@ import java.util.*;
 
 public class IndexMgr {
 	
-	private IndexMgr(){}
+	private IndexMgr(){};
 	private static IndexMgr instance=new IndexMgr();
 	public static IndexMgr getInstance(){
 		return instance;
@@ -483,7 +483,12 @@ public class IndexMgr {
 	// 9. 질문리스트 얻기
 	//--------------------
 	public List<Q_Youhyoo_Dto> getQList(String u_id){
-		String sql="select * from Q_Youhyoo where qy_id="+"'"+u_id+"' order by qy_num desc";
+		String sql="";
+		if(u_id.equals("admin")){
+			sql="select * from Q_Youhyoo order by qy_num desc";
+		}else{
+			sql="select * from Q_Youhyoo where qy_id="+"'"+u_id+"' order by qy_num desc";
+		}
 		Connection con=null;
 		ResultSet rs=null;
 		PreparedStatement pstmt=null;
@@ -501,7 +506,6 @@ public class IndexMgr {
 				dto.setQy_num(rs.getInt("qy_num"));
 				dto.setQy_state(rs.getBoolean("qy_state"));
 				dto.setQy_title(rs.getString("qy_title"));
-				dto.setQy_content(rs.getString("qy_content"));
 				dto.setQy_id(rs.getString("qy_id"));
 				dto.setQy_date(rs.getDate("qy_date"));
 				dto.setQy_answer(rs.getString("qy_answer"));
@@ -522,6 +526,36 @@ public class IndexMgr {
 
 		return q_list;
 	}//getQList() end
+	
+	public String getQListCon(int qy_num){
+		String sql="select qy_content from Q_Youhyoo where qy_num='"+qy_num+"'";
+		
+		Connection con=null;
+		ResultSet rs=null;
+		PreparedStatement pstmt=null;
+		String contents="";
+		
+		try{
+			//처리내용
+			con=getConnection();//커넥션 얻기
+			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			rs = pstmt.executeQuery();
+
+			if(rs.next()){
+				contents=rs.getString("qy_content");
+			}
+		}catch(Exception ex){
+			System.out.println("getQListCon() 예외 :"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(pstmt!=null){pstmt.close();}
+				if(con!=null){con.close();}
+			}catch(Exception ex){}
+		}//finally end
+
+		return contents;
+	}//getQListCon() end
 	
 	//--------------------	
 	// 10. 잔여객실(팬션) 얻기
