@@ -269,6 +269,7 @@ public class User_Dao {
 			pstmt.setInt(6, dto.getU_birth());
 			pstmt.setString(7, dto.getU_email());
 			pstmt.setString(8, dto.getU_id());
+			
 			pstmt.executeUpdate(); //쿼리 수행
 		}catch(Exception ex){
 			System.out.println("updateUser() 예외 :"+ex);
