@@ -283,13 +283,11 @@ public class IndexMgr {
 	}//delWishlist() end
 	
 	//--------------------	
-	// 7-1. 예약정보 리스트 얻기
+	// 7-1. 예약정보 리스트 얻기(객실정보)
 	//--------------------
 	public List<OrderRoom_Dto> getOrder(String u_id ,String sDate, String eDate){
-		//select * from order_room where o_num=(select ou_num from order_user where ou_id='dj');
 		
-		//select * from order_room inner join order_user;
-		//select ou_num,o_date,o_pname,o_state,ou_customer,ou_cell,ou_id from order_room inner join order_user where ou_id='dj' and o_date between '2016-05-24' and '2016-05-31' order by o_date;
+		//order_room에서 사용자ID,시작날짜,끝날짜로 검색
 		String sql="select distinct o_pname,o_pnum from order_room inner join"
 				+" order_user where ou_id='"+u_id+"'"+" and ou_date between '"+sDate+"'"+
 				" and '"+eDate+"' order by ou_num desc";
@@ -299,34 +297,18 @@ public class IndexMgr {
 		List<OrderRoom_Dto> o_list=new ArrayList<OrderRoom_Dto>();	
 			
 		try{
-		//처리내용
-			con=getConnection();//커넥션 얻기
-			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			con=getConnection();
+			pstmt=con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()){
-			/*	
-			OrderRoom_Dto order=new OrderRoom_Dto();
-			order.setO_num(rs.getInt("o_num"));
-			order.setO_pnum(rs.getInt("o_pnum"));
-			order.setO_pname(rs.getString("o_pname"));
-			order.setO_rnum(rs.getInt("o_rnum"));
-			order.setO_people(rs.getInt("o_people"));
-			order.setO_rname(rs.getString("o_rname"));
-			order.setO_date(rs.getDate("o_date"));
-			order.setO_exprice(rs.getInt("o_exprice"));
-			order.setO_price(rs.getInt("o_price"));
-			order.setO_state(rs.getBoolean("o_state"));
-			order.setO_group(rs.getInt("o_group"));
-			*/
-			OrderRoom_Dto order=new OrderRoom_Dto();
-			
-			order.setO_pname(rs.getString("o_pname"));
-			order.setO_pnum(rs.getInt("o_pnum"));
-			
-			o_list.add(order);
-			}
-					
+				OrderRoom_Dto order=new OrderRoom_Dto();
+				
+				order.setO_pname(rs.getString("o_pname"));
+				order.setO_pnum(rs.getInt("o_pnum"));
+
+				o_list.add(order);
+			}			
 		}catch(Exception ex){
 			System.out.println("getOrder() 예외 :"+ex);
 		}finally{
@@ -336,37 +318,32 @@ public class IndexMgr {
 				if(con!=null){con.close();}
 			}catch(Exception ex){}
 		}//finally end
-		
 		return o_list;
 	}//getOrder() end
 	
 	//--------------------	
-	// 7-2. 예약정보 리스트 얻기
+	// 7-2. 예약정보 리스트 얻기(사용자 정보)
 	//--------------------
 	public List<OrderUser_Dto> getUser(String u_id ,String sDate, String eDate){
 		
+		//order_user에서 사용자ID,시작날짜,끝날짜로 검색
 		String sql="select ou_num,ou_customer,ou_cell,ou_date from"
 				+" order_user where ou_id='"+u_id+"'"+" and ou_date between '"+sDate+"'"+
 				" and '"+eDate+"' order by ou_num desc";
-		/*
-		String sql="select ou_num,ou_customer,ou_cell,ou_id,o_date,o_rname from order_room inner join"
-				+" order_user where ou_id='"+u_id+"'"+" and o_date between '"+sDate+"'"+
-				" and '"+eDate+"' order by o_date";
-		*/		
+	
 		Connection con=null;
 		ResultSet rs=null;
 		PreparedStatement pstmt=null;
 		List<OrderUser_Dto> ou_list=new ArrayList<OrderUser_Dto>();	
 
 		try{
-			//처리내용
-			con=getConnection();//커넥션 얻기
-			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			con=getConnection();
+			pstmt=con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
 			while(rs.next()){
-			
 				OrderUser_Dto ou=new OrderUser_Dto();
+				
 				ou.setOu_num(rs.getInt("ou_num"));
 				ou.setOu_customer(rs.getString("ou_customer"));
 				ou.setOu_cell(rs.getString("ou_cell"));
@@ -392,7 +369,10 @@ public class IndexMgr {
 	// 8-1. 예약 상세정보 얻기(객실) 
 	//--------------------
 	public List<OrderRoom_Dto> getOrderRoom(int ou_num){
+		
 		//select * from order_room where o_group=any(select ou_num from order_user where ou_num=1);
+		
+		//order_user에서 주문번호를 검색한 결과로 order_room의 o_group(객실주문번호 그룹)과 비교 -> order_room 모든 컬럼 검색 
 		String sql="select * from order_room where o_group=any(select ou_num from order_user where ou_num="+ou_num+")";
 				
 		Connection con=null;
@@ -401,13 +381,13 @@ public class IndexMgr {
 		List<OrderRoom_Dto> o_list=new ArrayList<OrderRoom_Dto>();
 		
 		try{
-			//처리내용
-			con=getConnection();//커넥션 얻기
-			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			con=getConnection();
+			pstmt=con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
 			while(rs.next()){
 				OrderRoom_Dto order=new OrderRoom_Dto();
+				
 				order.setO_num(rs.getInt("o_num"));
 				order.setO_pnum(rs.getInt("o_pnum"));
 				order.setO_pname(rs.getString("o_pname"));
@@ -422,7 +402,6 @@ public class IndexMgr {
 				
 				o_list.add(order);
 			}
-
 		}catch(Exception ex){
 			System.out.println("getOrderRoom() 예외 :"+ex);
 		}finally{
@@ -440,7 +419,9 @@ public class IndexMgr {
 	// 8-2. 예약 상세정보 얻기(유저) 
 	//--------------------
 	public OrderUser_Dto getOrderUser(int ou_num){
+		
 		//select * from order_user where ou_num=1;
+		//order_user에서 ou_num(주문번호)으로 모든 컬럼 검색 
 		String sql="select * from order_user where ou_num="+ou_num;
 				
 		Connection con=null;
@@ -448,9 +429,8 @@ public class IndexMgr {
 		PreparedStatement pstmt=null;	
 		OrderUser_Dto ou=new OrderUser_Dto();
 		try{
-			//처리내용
-			con=getConnection();//커넥션 얻기
-			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			con=getConnection();
+			pstmt=con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
 			while(rs.next()){
@@ -484,6 +464,7 @@ public class IndexMgr {
 	//--------------------
 	public List<Q_Youhyoo_Dto> getQList(String u_id){
 		String sql="";
+		//Q_Youhyoo에서 qy_id로 모든 컬럼 검색
 		if(u_id.equals("admin")){
 			sql="select * from Q_Youhyoo order by qy_num desc";
 		}else{
@@ -495,9 +476,8 @@ public class IndexMgr {
 		List<Q_Youhyoo_Dto> q_list=new ArrayList<Q_Youhyoo_Dto>();	
 
 		try{
-			//처리내용
-			con=getConnection();//커넥션 얻기
-			pstmt=con.prepareStatement(sql);//생성시 인자 넣는다
+			con=getConnection();
+			pstmt=con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
 			while(rs.next()){
@@ -511,8 +491,7 @@ public class IndexMgr {
 				dto.setQy_date(rs.getDate("qy_date"));
 				dto.setQy_answer(rs.getString("qy_answer"));
 				
-				
-				q_list.add(dto);//list에 넣기
+				q_list.add(dto);
 			}
 
 		}catch(Exception ex){
@@ -528,6 +507,7 @@ public class IndexMgr {
 		return q_list;
 	}//getQList() end
 	
+	//동건이가 작성??
 	public String getQListCon(int qy_num){
 		String sql="select qy_content from Q_Youhyoo where qy_num='"+qy_num+"'";
 		
@@ -561,31 +541,33 @@ public class IndexMgr {
 	//--------------------	
 	// 10. 잔여객실(팬션) 얻기
 	//--------------------
-	/****
-	select p_num,p_name,p_addr1,p_addr2 from pension 
-	where p_addr1 like '경기%' and p_num not in (select distinct o_pnum from order_room where o_date='2016-05-30') 
-	or p_addr2 like '경기%' and p_num not in (select distinct o_pnum from order_room where o_date='2016-05-30');
-	****/ 
 	public List<Pension_Dto> getDPList(String location, String o_date){
+		
+		String loca=location.substring(0,2);
+		//해당 날짜에 모든 룸이 예약이 된 팬션은 팬션리스트에서 제외시킨다
+		
+		//1.order_room에서 해당날짜(o_date)에 예약된 객실의 o_pnum(팬션넘버)을 구함 
+		//2.pension에서 
+		//  p_addr1이 해당지역(location)과 일치하고, 위 검색 결과(o_pnum)를 제외한(not in) p_num을 구함
+		//3.p_dddr2에서도 2번과 같은 쿼리 검색
+		//4.2번과 3번을 or로 연결하여 pension의 컬럼을 검색
+		String sql="select p_num,p_name,p_addr1,p_addr2 from pension"
+				+ " where p_addr1 like '"+loca+"%' and p_num not in (select distinct o_pnum from order_room where o_date='"+o_date+"')"
+				+ " or p_addr2 like '"+loca+"%' and p_num not in (select distinct o_pnum from order_room where o_date='"+o_date+"')";
+		
 		Connection con=null;
 		ResultSet rs=null;
 		Statement stmt=null;
 		List <Pension_Dto> pList=new ArrayList<Pension_Dto>();
 		
 		try{
-			con=getConnection();//커넥션 얻기
-			stmt=con.createStatement();
-			String loca=location.substring(0,2);
-			String sql="select p_num,p_name,p_addr1,p_addr2 from pension"
-					+ " where p_addr1 like '"+loca+"%' and p_num not in (select distinct o_pnum from order_room where o_date='"+o_date+"')"
-					+ " or p_addr2 like '"+loca+"%' and p_num not in (select distinct o_pnum from order_room where o_date='"+o_date+"')";
-					
+			con=getConnection();
+			stmt=con.createStatement();				
 			rs=stmt.executeQuery(sql);
+			
 			while(rs.next()){
 				Pension_Dto p_dto=new Pension_Dto();
-				
-				//업소,  
-				//addr1,addr2 
+		
 				p_dto.setP_num(rs.getInt("p_num"));
 				p_dto.setP_name(rs.getString("p_name"));
 				p_dto.setP_addr1(rs.getString("p_addr1"));
@@ -608,16 +590,14 @@ public class IndexMgr {
 	//--------------------	
 	// 11. 잔여객실(객실) 얻기
 	//--------------------
-	/*
-	select * from room where r_pension=1 and r_num Not In(select o_rnum from order_room where o_date='2016-05-27');
-	
-	select * from room where r_num Not In(select o_rnum from order_room where o_date='2016-05-20');
-	
-	select * from room inner join order_room where o_date<>'2016-05-27' and r_pension=1;
-	
-	select * from room inner join pension on p_num=r_pension where r_pension="+p_num  
-	*/
 	public List<Room_Dto> getDRList(int p_num, String o_date){
+		
+		//해당날짜에 예약이 된 룸은 룸리스트에서 제외시킨다
+		//1.order_room에서 해당날짜(o_date)에 예약된 객실의 o_rnum을 구함
+		//2.room에서 1번의 검색결과를 제외시키고(not in) 해당팬션(p_num)의 모든 컬럼을 검색
+		String sql="select * from room where r_pension="+p_num+" and r_num Not In"
+				+ "(select o_rnum from order_room where o_date="+"'"+o_date+"'"+")";
+		
 		Connection con=null;
 		ResultSet rs=null;
 		Statement stmt=null;
@@ -625,15 +605,12 @@ public class IndexMgr {
 		List <Room_Dto>rList=new ArrayList<Room_Dto>();
 		try{
 			con=getConnection();//커넥션 얻기
-			stmt=con.createStatement();
-			String sql="select * from room where r_pension="+p_num+" and r_num Not In"
-					+ "(select o_rnum from order_room where o_date="+"'"+o_date+"'"+")";
+			stmt=con.createStatement();	
 			rs=stmt.executeQuery(sql);
 
 			while(rs.next()){
 				Room_Dto r_dto=new Room_Dto();
 				
-			    //방정보
 				r_dto.setR_name(rs.getString("r_name")); //객실이름
 				r_dto.setR_size(rs.getInt("r_size")); //평수
 				r_dto.setR_mincapa(rs.getInt("r_mincapa"));
@@ -657,27 +634,34 @@ public class IndexMgr {
 		return rList;
 	}//getDRList()
 	
-	//select o_group,sum(o_price) from order_room where o_group=any(select ou_num from order_user where ou_id='dj') group by o_group;
 	//--------------------	
 	// 12. 적립금 내역 얻기(적립금)
 	//--------------------
 	public List<OrderRoom_Dto> getPoint(String u_id){
+		
+		// gropu by 함수 사용
+		//1.order_user에서 u_id로 ou_num을 검색
+		//2.order_room에서 위 결과와 일치하는 o_group을 가진 o_price의 sum값을 검색
+		//3.o_group 기준으로 합친다(group by)
+		String sql="select o_group,sum(o_price) from order_room where o_group="
+				+ "any(select ou_num from order_user where ou_id='"+u_id+"') group by o_group";
+		
 		Connection con=null;
 		ResultSet rs=null;
 		Statement stmt=null;
 		
 		List<OrderRoom_Dto> pList=new ArrayList<OrderRoom_Dto>();
-		try{
-			
-			con=getConnection();//커넥션 얻기
+		try{		
+			con=getConnection();
 			stmt=con.createStatement();
-			String sql="select o_group,sum(o_price) from order_room where o_group="
-					+ "any(select ou_num from order_user where ou_id='"+u_id+"') group by o_group";
 			rs=stmt.executeQuery(sql);
+			
 			while(rs.next()){
 				OrderRoom_Dto o=new OrderRoom_Dto();
+				
 				o.setO_group(rs.getInt("o_group"));
 				o.setO_price(rs.getInt("sum(o_price)")/50);		
+				
 				pList.add(o);
 			}//while
 		}catch(Exception ex){
@@ -696,6 +680,10 @@ public class IndexMgr {
 	// 13. 적립금 내역 얻기2(일자,예약번호)
 	//--------------------
 	public List<OrderUser_Dto> getPuser(String u_id){
+		
+		//order_user에서 해당아이디로 ou_num,ou_date를 검색 ->역순으로 출력
+		String sql="select ou_num,ou_date from order_user where ou_id='"+u_id+"' order by ou_num desc";
+		
 		Connection con=null;
 		ResultSet rs=null;
 		Statement stmt=null;
@@ -705,7 +693,7 @@ public class IndexMgr {
 			
 			con=getConnection();//커넥션 얻기
 			stmt=con.createStatement();
-			String sql="select ou_num,ou_date from order_user where ou_id='"+u_id+"' order by ou_num desc";
+			
 			rs=stmt.executeQuery(sql);
 			while(rs.next()){
 				OrderUser_Dto ou=new OrderUser_Dto();
