@@ -619,6 +619,7 @@ public class IndexMgr {
 				r_dto.setR_min_wd(rs.getInt("r_min_wd")); //비성수기 주중가
 				r_dto.setR_max_we(rs.getInt("r_max_we")); //성수기 주말가
 				r_dto.setR_min_we(rs.getInt("r_min_we")); //비성수기 주말가
+				r_dto.setR_pension(rs.getInt("r_pension"));//팬션 넘버
 				
 				rList.add(r_dto);
 			}//while
