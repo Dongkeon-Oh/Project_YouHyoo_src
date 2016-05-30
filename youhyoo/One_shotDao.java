@@ -20,8 +20,7 @@ public class One_shotDao {
 	ResultSet rs=null;
 	//생성자 : 초기화 작업
 	
-	public List get_P_List(String sql){
-		
+	public List get_P_List(String sql){	
 		List <Pension_Dto>p_num=new ArrayList<Pension_Dto>();
 		
 		try{
@@ -63,7 +62,6 @@ public class One_shotDao {
 	}//getList()
 	
 	public List get_R_List(int p_num,int member,String date){
-		
 		List <Room_Dto>r_list=new ArrayList<Room_Dto>();
 		try{
 			con=getConnection();
@@ -103,5 +101,35 @@ public class One_shotDao {
 		}
 		return r_list;
 	}//getList()
+	
+	public List top_Search_List(String search){
+		List<Pension_Dto> s_list=new ArrayList<Pension_Dto>();
+		try{
+			con=getConnection();
+			stmt=con.createStatement();
+			String sql="select p_num,p_name,p_addr1,p_addr2 from pension where p_name like '%"+search+"%'";
+			rs=stmt.executeQuery(sql);
+			
+			while(rs.next()){
+				Pension_Dto p_dto=new Pension_Dto();
+				
+				p_dto.setP_num(rs.getInt("p_num"));
+				p_dto.setP_name(rs.getString("p_name"));
+				p_dto.setP_addr1(rs.getString("p_addr1"));
+				p_dto.setP_addr2(rs.getString("p_addr2"));
+				
+				s_list.add(p_dto);				
+			}//while
+		}catch(Exception ex){
+			System.out.println("top_Search_List() 오류"+ex);
+		}finally{
+			try{
+				if(rs!=null){rs.close();}
+				if(stmt!=null){stmt.close();}
+				if(con!=null){con.close();}
+				}catch(Exception exx){}
+			}//finally
+		return s_list;
+	}//top_Search_List()
 }//class
 
