@@ -527,10 +527,11 @@ public class IndexMgr {
 	// 10. ÀÜ¿©°´½Ç(ÆÒ¼Ç) ¾ò±â
 	//--------------------
 	/****
-	select p_num,p_name,p_addr1,p_addr2 from pension where p_num=(select r_pension from room where r_pension=1 and r_num
-	=(select o_rnum from order_room where o_date!='2016-05-30')) and p_addr1="°æ±âµµ";
+	select p_num,p_name,p_addr1,p_addr2 from pension 
+	where p_addr1 like '°æ±â%' and p_num not in (select distinct o_pnum from order_room where o_date='2016-05-30') 
+	or p_addr2 like '°æ±â%' and p_num not in (select distinct o_pnum from order_room where o_date='2016-05-30');
 	****/ 
-	public List<Pension_Dto> getDPList(String location){
+	public List<Pension_Dto> getDPList(String location, String o_date){
 		Connection con=null;
 		ResultSet rs=null;
 		Statement stmt=null;
@@ -540,8 +541,10 @@ public class IndexMgr {
 			con=getConnection();//Ä¿³Ø¼Ç ¾ò±â
 			stmt=con.createStatement();
 			String loca=location.substring(0,2);
-			String sql="select p_num,p_name,p_addr1,p_addr2 from pension where p_addr1 like "
-					+ "'"+loca+"%' or p_addr2 like '"+loca+"%'";
+			String sql="select p_num,p_name,p_addr1,p_addr2 from pension"
+					+ " where p_addr1 like '"+loca+"%' and p_num not in (select distinct o_pnum from order_room where o_date='"+o_date+"')"
+					+ " or p_addr2 like '"+loca+"%' and p_num not in (select distinct o_pnum from order_room where o_date='"+o_date+"')";
+					
 			rs=stmt.executeQuery(sql);
 			while(rs.next()){
 				Pension_Dto p_dto=new Pension_Dto();
