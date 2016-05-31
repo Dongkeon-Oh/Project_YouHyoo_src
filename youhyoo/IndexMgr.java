@@ -282,15 +282,19 @@ public class IndexMgr {
 		}//finally end
 	}//delWishlist() end
 	
-	//--------------------	
+	//---------------------------------	
 	// 7-1. 예약정보 리스트 얻기(객실정보)
-	//--------------------
+	//---------------------------------
 	public List<OrderRoom_Dto> getOrder(String u_id ,String sDate, String eDate){
 		
+		//group by , having 조건절 사용
 		//order_room에서 사용자ID,시작날짜,끝날짜로 검색
-		String sql="select distinct o_pname,o_pnum from order_room inner join"
-				+" order_user where ou_id='"+u_id+"'"+" and ou_date between '"+sDate+"'"+
-				" and '"+eDate+"' order by ou_num desc";
+		//select o_pname,o_pnum from order_room group by o_group having o_group=
+		//any(select ou_num from order_user where ou_id=
+		//'dj' and ou_date between '2016-05-16' and '2016-05-31' order by ou_num desc) order by o_group desc;
+		String sql="select o_pname,o_pnum from order_room group by o_group having o_group="
+				+"any(select ou_num from order_user where ou_id='"+u_id+"'"+" and ou_date between '"
+				+sDate+"'"+" and '"+eDate+"' order by ou_num desc) order by o_group desc";
 		Connection con=null;
 		ResultSet rs=null;
 		PreparedStatement pstmt=null;
@@ -640,7 +644,7 @@ public class IndexMgr {
 	//--------------------
 	public List<OrderRoom_Dto> getPoint(String u_id){
 		
-		// gropu by 함수 사용
+		// groou by 함수 사용
 		//1.order_user에서 u_id로 ou_num을 검색
 		//2.order_room에서 위 결과와 일치하는 o_group을 가진 o_price의 sum값을 검색
 		//3.o_group 기준으로 합친다(group by)
